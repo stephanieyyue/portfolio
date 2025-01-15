@@ -1,0 +1,5 @@
+body {
+  max-width: 1200px;
+  margin-inline: max(1em, (100% - 100ch) / 2);
+  padding: 0 20px;
+}
