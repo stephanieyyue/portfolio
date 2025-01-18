@@ -101,3 +101,149 @@ h1 {
 .projects article h2 {
   margin: 0;
 }
+
+
+.resume-container {
+  max-width: 1200px;
+  margin-inline: max(1em, (100% - 100ch) / 2);
+  padding: 0 20px;
+}
+
+.resume-header {
+  text-align: center;
+  margin-block: 2em;
+}
+
+.resume-header h1 {
+  font-size: 300%;
+  margin-block: 0.3em;
+  line-height: 1.1;
+  text-wrap: balance;
+  color: var(--color-accent);
+  background: linear-gradient(to bottom, transparent 50%, oklch(90% 0.1 0) 50%);
+  display: inline-block;
+  padding: 0 0.2em;
+}
+
+.contact-info {
+  display: flex;
+  justify-content: center;
+  gap: 1.5em;
+  color: oklch(50% 0 0);
+}
+
+.resume-section {
+  margin-block: 2em;
+}
+
+.section-title {
+  font-size: 200%;
+  color: oklch(65% 50% 0);
+  border-bottom: 1px solid oklch(80% 3% 200);
+  padding-bottom: 0.3em;
+  margin-bottom: 1em;
+  line-height: 1.1;
+  text-wrap: balance;
+}
+
+.experience-entry {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 1em;
+  margin-bottom: 1.5em;
+}
+
+.entry-header {
+  grid-column: 1 / -1;
+}
+
+.job-title {
+  font-weight: bold;
+  font-size: 120%;
+  color: oklch(40% 0 0);
+}
+
+.company-name {
+  color: var(--color-accent);
+}
+
+.date-range {
+  color: oklch(50% 0 0);
+  font-style: italic;
+}
+
+.responsibilities {
+  grid-column: 1 / -1;
+  margin-left: 1.5em;
+}
+
+.responsibilities li {
+  margin-bottom: 0.5em;
+}
+
+.skills-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 1.5em;
+}
+
+.skill-category h3 {
+  color: var(--color-accent);
+  margin-bottom: 0.5em;
+  font-size: 110%;
+}
+
+.skill-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.skill-list li {
+  margin-bottom: 0.3em;
+}
+
+.education-entry {
+  margin-bottom: 1.5em;
+}
+
+.degree-info {
+  font-weight: bold;
+  color: oklch(40% 0 0);
+}
+
+
+@media print {
+  nav {
+      display: none;
+  }
+  
+  .resume-container {
+      padding: 0;
+  }
+  
+  .section-title {
+      color: oklch(40% 0 0);
+  }
+  
+  a {
+      text-decoration: none;
+      color: inherit;
+  }
+}
+
+
+@media (max-width: 600px) {
+  .experience-entry {
+      grid-template-columns: 1fr;
+  }
+  
+  .contact-info {
+      flex-direction: column;
+      gap: 0.5em;
+  }
+  
+  .skills-grid {
+      grid-template-columns: 1fr;
+  }
+}
