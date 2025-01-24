@@ -3,7 +3,7 @@ let pages = [
   { url: 'projects/', title: 'Projects' },
   { url: 'contact/', title: 'Contact' },
   { url: 'resume/', title: 'Resume' },
-  { url: 'https://github.com/stephanieyue', title: 'GitHub' }
+  { url: 'https://github.com/stephanieyyue', title: 'GitHub' }
 ];
 
 const ARE_WE_HOME = document.documentElement.classList.contains('home');
