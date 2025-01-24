@@ -247,3 +247,25 @@ h1 {
       grid-template-columns: 1fr;
   }
 }
+
+.color-scheme {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  font-size: 80%;
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+select {
+  font-family: inherit;
+}
+
+html {
+  color-scheme: light dark;
+}
+
+nav {
+  --border-color: oklch(50% 10% 200 / 40%);
+}
