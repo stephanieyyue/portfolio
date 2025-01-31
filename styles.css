@@ -269,3 +269,18 @@ html {
 nav {
   --border-color: oklch(50% 10% 200 / 40%);
 }
+
+#profile-stats dl {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1em;
+}
+
+#profile-stats dt {
+  grid-row: 1;
+}
+
+#profile-stats dd {
+  grid-row: 2;
+  margin: 0;
+}
