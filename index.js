@@ -7,6 +7,9 @@ renderProjects(latestProjects, projectsContainer, 'h2');
 
 const githubData = await fetchGitHubData('stephanieyyue');
 const profileStats = document.querySelector('#profile-stats');
+if (projectsContainer && latestProjects) {
+    renderProjects(latestProjects, projectsContainer, 'h2');
+}
 
 if (profileStats) {
     profileStats.innerHTML = `
