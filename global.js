@@ -99,7 +99,13 @@ export async function fetchGitHubData(username) {
 }
 
 export function renderProjects(projects, containerElement, headingLevel = 'h2') {
+  if (!Array.isArray(projects)) {
+      console.error('Projects must be an array');
+      return;
+  }
+  
   containerElement.innerHTML = '';
+  
   projects.forEach(project => {
       const article = document.createElement('article');
       article.innerHTML = `
