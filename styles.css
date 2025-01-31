@@ -284,3 +284,7 @@ nav {
   grid-row: 2;
   margin: 0;
 }
+
+#profile-stats {
+  border: 2px solid red;
+}
