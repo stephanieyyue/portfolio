@@ -94,8 +94,8 @@ export async function fetchJSON(url) {
   }
 }
 
-export async function fetchGitHubData(username) {
-  return fetchJSON(`https://api.github.com/users/${username}`);
+export async function fetchGitHubData(stephanieyyue) {
+  return fetchJSON(`https://api.github.com/users/${stephanieyyue}`);
 }
 
 export function renderProjects(projects, containerElement, headingLevel = 'h2') {
