@@ -9,12 +9,15 @@ const projectsContainer = document.querySelector('.projects');
 // Render the projects
 renderProjects(projects, projectsContainer, 'h2');
 
+console.log("projects.js is running!");
+
 document.addEventListener("DOMContentLoaded", function () {
-    console.log("DOM fully loaded");
+    console.log(" DOM fully loaded");
 
     const projectsTitle = document.querySelector(".projects-title");
-    const projectItems = document.querySelectorAll(".projects article");
+    console.log("projectsTitle element:", projectsTitle);
 
+    const projectItems = document.querySelectorAll(".projects article");
     console.log("Found project items:", projectItems.length);
 
     if (projectsTitle && projectItems.length > 0) {
@@ -22,7 +25,7 @@ document.addEventListener("DOMContentLoaded", function () {
         projectsTitle.textContent = newTitle;
         console.log(`Updated title to: ${newTitle}`);
     } else {
-        console.warn("Could not find .projects-title or no projects found.");
+        console.warn("⚠️ Could not find .projects-title or no projects found.");
     }
 });
 
