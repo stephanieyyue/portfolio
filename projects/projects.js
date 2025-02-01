@@ -9,23 +9,20 @@ const projectsContainer = document.querySelector('.projects');
 // Render the projects
 renderProjects(projects, projectsContainer, 'h2');
 
-document.addEventListener("DOMContentLoaded", async function () {
+document.addEventListener("DOMContentLoaded", function () {
+    console.log("DOM is fully loaded");
+
     const projectsTitle = document.querySelector(".projects-title");
-    const projectList = document.querySelectorAll("#projects-list li");
-    
-    if (projectsTitle && projectList.length > 0) {
-        projectsTitle.textContent = `Projects (${projectList.length})`;
-    }
-    
-    const containerElement = document.querySelector("#projects-container");
-    if (containerElement) {
-        try {
-            const projects = await fetchJSON('/data/projects.json');
-            if (projects && projectsTitle) {
-                projectsTitle.textContent = `Projects (${projects.length})`;
-            }
-        } catch (error) {
-            console.error("Failed to fetch projects:", error);
-        }
+    const projectItems = document.querySelectorAll(".projects article"); 
+
+    console.log("projectsTitle element:", projectsTitle);
+    console.log("Found project items:", projectItems.length);
+
+    if (projectsTitle && projectItems.length > 0) {
+        projectsTitle.textContent = `Projects (${projectItems.length})`;
+        console.log(`Updated title to: Projects (${projectItems.length})`);
+    } else {
+        console.warn("No projects found in .projects");
     }
 });
+
