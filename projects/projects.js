@@ -17,12 +17,12 @@ window.addEventListener("load", function () {
 
     console.log("Found project items:", projectItems.length);
 
-    if (projectsTitle) {
+    if (projectsTitle && projectItems.length > 0) {
         const newTitle = `Projects (${projectItems.length})`;
         projectsTitle.textContent = newTitle;
         console.log(`Updated title to: ${newTitle}`);
     } else {
-        console.warn("Could not find .projects-title");
+        console.warn("Could not find .projects-title or no projects found.");
     }
 });
 
