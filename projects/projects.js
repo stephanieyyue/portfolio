@@ -9,8 +9,8 @@ const projectsContainer = document.querySelector('.projects');
 // Render the projects
 renderProjects(projects, projectsContainer, 'h2');
 
-window.addEventListener("load", function () {
-    console.log("Window fully loaded");
+document.addEventListener("DOMContentLoaded", function () {
+    console.log("DOM fully loaded");
 
     const projectsTitle = document.querySelector(".projects-title");
     const projectItems = document.querySelectorAll(".projects article");
