@@ -1,43 +1,30 @@
 import { fetchJSON, renderProjects } from '../global.js';
 
-// Fetch the project data
-const projects = await fetchJSON('../lib/projects.json');
-
-// Select the container where projects will be displayed
-const projectsContainer = document.querySelector('.projects');
-
-// Render the projects
-renderProjects(projects, projectsContainer, 'h2');
-
 console.log("projects.js is running!");
 
-document.querySelector(".projects-title").textContent = "12 Projects";
-
-document.addEventListener('DOMContentLoaded', async () => {
+async function init() {
     try {
-        // Log to verify the script is running
-        console.log('projects.js is running!');
-        
-        // Fetch the projects
         const projects = await fetchJSON('../lib/projects.json');
-        console.log('Fetched projects:', projects);
-        
-        // Update the title first
-        const projectsTitle = document.querySelector('.projects-title');
-        if (projectsTitle) {
-            projectsTitle.textContent = `Projects (${projects.length})`;
-        }
-        
-        // Then render the projects
         const projectsContainer = document.querySelector('.projects');
+        const projectsTitle = document.querySelector('.projects-title');
+
+        // Update title to show count
+        if (projectsTitle && projects) {
+            projectsTitle.textContent = `${projects.length} Projects`;
+        }
+
+        // Clear existing content first
         if (projectsContainer) {
+            projectsContainer.innerHTML = '';
+        }
+
+        // Render all projects
+        if (projectsContainer && projects) {
             renderProjects(projects, projectsContainer, 'h2');
         }
-        
     } catch (error) {
         console.error('Error:', error);
     }
-});
+}
 
-
-
+init();
