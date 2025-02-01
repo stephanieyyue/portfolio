@@ -11,26 +11,33 @@ renderProjects(projects, projectsContainer, 'h2');
 
 console.log("projects.js is running!");
 
-async function init() {
+import { fetchJSON, renderProjects } from '../global.js';
+
+document.addEventListener('DOMContentLoaded', async () => {
     try {
-        const projects = await fetchJSON('../lib/projects.json');
-        const projectsContainer = document.querySelector('.projects');
+        // Log to verify the script is running
+        console.log('projects.js is running!');
         
-        // Add this part to update the title with count
+        // Fetch the projects
+        const projects = await fetchJSON('../lib/projects.json');
+        console.log('Fetched projects:', projects);
+        
+        // Update the title first
         const projectsTitle = document.querySelector('.projects-title');
         if (projectsTitle) {
             projectsTitle.textContent = `Projects (${projects.length})`;
         }
-
+        
+        // Then render the projects
+        const projectsContainer = document.querySelector('.projects');
         if (projectsContainer) {
             renderProjects(projects, projectsContainer, 'h2');
         }
+        
     } catch (error) {
         console.error('Error:', error);
     }
-}
-
-init();
+});
 
 
 
