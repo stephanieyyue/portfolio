@@ -20,7 +20,7 @@ document.addEventListener("DOMContentLoaded", async function () {
     const containerElement = document.querySelector("#projects-container");
     if (containerElement) {
         try {
-            const projects = await fetchJSON('/data/projects.json'); // Adjust URL if needed
+            const projects = await fetchJSON('/data/projects.json');
             if (projects && projectsTitle) {
                 projectsTitle.textContent = `Projects (${projects.length})`;
             }
