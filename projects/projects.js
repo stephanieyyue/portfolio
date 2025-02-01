@@ -11,7 +11,7 @@ renderProjects(projects, projectsContainer, 'h2');
 
 console.log("projects.js is running!");
 
-import { fetchJSON, renderProjects } from '../global.js';
+document.querySelector(".projects-title").textContent = "12 Projects";
 
 document.addEventListener('DOMContentLoaded', async () => {
     try {
