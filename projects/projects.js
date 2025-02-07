@@ -1,38 +1,42 @@
 import { fetchJSON } from '../global.js';
 import * as d3 from 'https://unpkg.com/d3@7?module';
 
-// Select the SVG element
+console.log("projects.js is running!");
+
+// Select the SVG element and set dimensions
 let svg = d3.select("svg")
-    .attr("width", 200)  // Ensure correct width and height
+    .attr("width", 200)
     .attr("height", 200)
     .append("g")
-    .attr("transform", "translate(100,100)");  // Center the pie chart
+    .attr("transform", "translate(100,100)"); // Center the pie chart
 
 // Data for the pie chart
 let data = [1, 2, 3, 4, 5, 5];
 
-// Define the color scale
-let colors = d3.scaleOrdinal(d3.schemeTableau10);
-
-// Generate pie chart data
-let pieGenerator = d3.pie(); // Ensure it's declared before use
-let pieData = pieGenerator(data); // Generates pie chart slices
+// Define the pie generator **BEFORE** using it
+let pieGenerator = d3.pie(); 
+let pieData = pieGenerator(data);  // Now it's properly defined
 
 // Define an arc generator
 let arcGenerator = d3.arc()
-    .innerRadius(0)  // Pie chart (donut chart would use a nonzero value)
+    .innerRadius(0)  // Make it a pie chart (0 for full pie, not donut)
     .outerRadius(80); // Set radius
+
+// Define a color scale to automatically assign colors
+let colors = d3.scaleOrdinal(d3.schemeTableau10);
 
 // Append the slices to the SVG
 svg.selectAll("path")
     .data(pieData)
     .enter()
     .append("path")
-    .attr("d", arcGenerator) // Generates the shape
-    .attr("fill", (d, i) => colors(i)) // Assign colors dynamically
-    .attr("stroke", "white") // Add stroke for better visualization
+    .attr("d", arcGenerator)  // Generate shape
+    .attr("fill", (d, i) => colors(i))  // Assign colors
+    .attr("stroke", "white")  // Add border to separate slices
     .attr("stroke-width", 2);
-    
+
+console.log("Pie chart successfully rendered!");
+
 async function init() {
   try {
     console.log("Calling fetchJSON...");
