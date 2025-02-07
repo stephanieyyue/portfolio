@@ -23,31 +23,41 @@ async function init() {
         console.log("Calling fetchJSON...");
         const projects = await fetchJSON('../lib/projects.json');
         console.log("Fetched projects:", projects);
+        console.log("Projects length:", projects.length);
 
-        // Select the container that holds your projects.
         const projectsContainer = document.querySelector('.projects');
+        console.log("Projects container:", projectsContainer);
+
         const projectsTitle = document.querySelector('.projects-title');
 
-        // Clear the container so only dynamic projects from JSON are shown.
-        projectsContainer.innerHTML = '';
+        // Clear the container so only dynamic projects are shown.
+        if (projectsContainer) {
+            projectsContainer.innerHTML = '';
+            console.log("Cleared projects container.");
+        } else {
+            console.error("Projects container not found.");
+        }
 
-        // Update the heading text with the project count.
         if (projectsTitle && projects) {
             projectsTitle.textContent = `${projects.length} Projects`;
         }
 
-        // Render the projects from the JSON.
+        console.log("About to render projects.");
         renderProjects(projects, projectsContainer, 'h2');
+        console.log("renderProjects function called.");
     } catch (error) {
         console.error('Error in init():', error);
     }
 }
 
+
 init();
 
 function renderProjects(projects, container, headingLevel = 'h2') {
+    console.log("Inside renderProjects. Number of projects to render:", projects.length);
     projects.forEach((project, index) => {
         console.log(`Rendering project ${index + 1}:`, project);
+        
         const article = document.createElement('article');
         article.style.border = '1px solid red';
         article.style.padding = '10px';
@@ -55,18 +65,18 @@ function renderProjects(projects, container, headingLevel = 'h2') {
 
         const heading = document.createElement(headingLevel);
         heading.textContent = project.title;
-        
+
         const img = document.createElement('img');
         img.src = project.image;
         img.alt = project.title;
         img.style.maxWidth = '100%';
-        
+
         const textDiv = document.createElement('div');
         textDiv.className = 'project-text';
-        
+
         const description = document.createElement('p');
         description.textContent = project.description;
-        
+
         // Create the year element.
         const yearText = document.createElement('p');
         yearText.textContent = `c. ${project.year}`;
@@ -74,14 +84,15 @@ function renderProjects(projects, container, headingLevel = 'h2') {
         yearText.style.fontVariantNumeric = 'oldstyle-nums';
         yearText.style.fontStyle = 'italic';
         yearText.style.color = '#666';
-        
+
         textDiv.appendChild(description);
         textDiv.appendChild(yearText);
-        
+
         article.appendChild(heading);
         article.appendChild(img);
         article.appendChild(textDiv);
-        
+
         container.appendChild(article);
     });
+    console.log("Finished rendering projects.");
 }
