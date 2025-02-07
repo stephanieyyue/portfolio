@@ -5,47 +5,32 @@ console.log("projects.js is running!");
 
 let arcGenerator = d3.arc().innerRadius(0).outerRadius(50);
 
-// --- Pie Chart Calculation ---
-// Define your data for the pie chart slices.
-let data = [1, 2, 3, 4, 5, 5];
-let total = 0;
-for (let d of data) {
-  total += d;
-}
-let angle = 0;
-let arcData = [];
-for (let d of data) {
-  let endAngle = angle + (d / total) * 2 * Math.PI;
-  arcData.push({ startAngle: angle, endAngle });
-  angle = endAngle;
-}
+// 1. Create an arc generator with an inner radius of 0 (for a full pie)
+//    and an outer radius of 50.
+const arcGenerator = d3.arc().innerRadius(0).outerRadius(50);
 
-// Generate arc path strings using the arc generator.
-let arcs = arcData.map((d) => arcGenerator(d));
+// 2. Define your data for the pie chart slices.
+const data = [1, 2];  // This represents two slices, e.g., 33% and 67%
 
-// Define some colors for each slice (optional)
+// 3. Use d3.pie() to compute the start and end angles automatically.
+const pieGenerator = d3.pie();
+const arcData = pieGenerator(data);
+console.log("Arc data:", arcData);
+
+// 4. Map each computed arc data object to an SVG path string using your arc generator.
+const arcs = arcData.map(d => arcGenerator(d));
+console.log("Generated arcs:", arcs);
+
+// 5. Define colors for each slice.
 const colors = ['gold', 'purple'];
 
-// For each arc in the arcs array, append a <path> element to the SVG.
+// 6. Append a <path> element for each slice to your SVG.
 arcs.forEach((arcPath, i) => {
   d3.select('svg')
     .append('path')
-    .attr('d', arcPath)              
-    .attr('fill', colors[i % colors.length]);
+    .attr('d', arcPath)              // Set the 'd' attribute to the generated path string.
+    .attr('fill', colors[i % colors.length]); // Set the fill color.
 });
-
-// --- Full Circle Example ---
-// Generate a full circle (arc path) by specifying the start and end angles in radians.
-let fullArc = arcGenerator({
-  startAngle: 0,
-  endAngle: 2 * Math.PI,
-});
-// Append the full circle as a new path element to the existing <svg> element.
-d3.select('svg')
-  .append('path')
-  .attr('d', fullArc)
-  .attr('fill', 'red');
-
 
 async function init() {
   try {
