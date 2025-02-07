@@ -5,32 +5,22 @@ console.log("projects.js is running!");
 
 let arcGenerator = d3.arc().innerRadius(0).outerRadius(50);
 
-// 1. Create an arc generator with an inner radius of 0 (for a full pie)
-//    and an outer radius of 50.
-const arcGenerator = d3.arc().innerRadius(0).outerRadius(50);
-
-// 2. Define your data for the pie chart slices.
-const data = [1, 2];  // This represents two slices, e.g., 33% and 67%
-
-// 3. Use d3.pie() to compute the start and end angles automatically.
-const pieGenerator = d3.pie();
-const arcData = pieGenerator(data);
-console.log("Arc data:", arcData);
-
-// 4. Map each computed arc data object to an SVG path string using your arc generator.
-const arcs = arcData.map(d => arcGenerator(d));
+// Now use it for your pie chart code:
+let data = [1, 2];  // Example data
+let pieGenerator = d3.pie();
+let arcData = pieGenerator(data);
+let arcs = arcData.map(d => arcGenerator(d));
 console.log("Generated arcs:", arcs);
 
-// 5. Define colors for each slice.
+// Append each arc to the SVG.
 const colors = ['gold', 'purple'];
-
-// 6. Append a <path> element for each slice to your SVG.
 arcs.forEach((arcPath, i) => {
   d3.select('svg')
     .append('path')
-    .attr('d', arcPath)              // Set the 'd' attribute to the generated path string.
-    .attr('fill', colors[i % colors.length]); // Set the fill color.
+    .attr('d', arcPath)
+    .attr('fill', colors[i % colors.length]);
 });
+
 
 async function init() {
   try {
