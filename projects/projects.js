@@ -12,12 +12,13 @@ let arc = arcGenerator({
   endAngle: 2 * Math.PI,
 });
 
-// Append a new path element to the SVG and use the generated arc path.
+// Append the arc as a new path element to the existing <svg> element.
 d3.select('svg')
   .append('path')
   .attr('d', arc)
   .attr('fill', 'red');
 
+// (Rest of your code below...)
 async function init() {
     try {
         const projects = await fetchJSON('../lib/projects.json');
@@ -29,7 +30,7 @@ async function init() {
         }
 
         if (projectsContainer && projects) {
-            // Clear any static markup before rendering:
+            // Clear static HTML if any.
             projectsContainer.innerHTML = '';
             renderProjects(projects, projectsContainer, 'h2');
         }
@@ -38,7 +39,6 @@ async function init() {
     }
 }
 
-// Call init() only once.
 init();
 
 function renderProjects(projects, container, headingLevel = 'h2') {
