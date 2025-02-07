@@ -3,50 +3,40 @@ import * as d3 from 'https://unpkg.com/d3@7?module';
 
 console.log("projects.js is running!");
 
-let data = [1, 2,3,4,5,5];
-let total = 0;
-
-for (let d of data) {
-  total += d;
-}
-let angle = 0;
-let arcData = [];
-
-for (let d of data) {
-  let endAngle = angle + (d / total) * 2 * Math.PI;
-  arcData.push({ startAngle: angle, endAngle });
-  angle = endAngle;
-}
-let arcs = arcData.map((d) => arcGenerator(d));
-
-// Define some colors for each slice (optional)
-const colors = ['gold', 'purple'];
-
-// For each arc in the arcs array, append a <path> element to the SVG.
-arcs.forEach((arc, i) => {
-  d3.select('svg')
-    .append('path')
-    .attr('d', arc)              // Set the path data using the generated arc string
-    .attr('fill', colors[i % colors.length]); // Optionally set a fill color for each slice
-});
-
-
-// Create an arc generator with an inner radius of 0 and an outer radius of 50.
 let arcGenerator = d3.arc().innerRadius(0).outerRadius(50);
 
-// Generate a full circle (arc path) by specifying the start and end angles in radians.
-let arc = arcGenerator({
+// Define your data for the pie chart slices.
+let data = [1, 2, 3, 4, 5, 5];
+
+// Use d3.pie() to compute arc data automatically.
+let sliceGenerator = d3.pie();
+let arcData = sliceGenerator(data);
+console.log("Arc data:", arcData);
+
+// Generate arc path strings using the arc generator.
+let arcs = arcData.map((d) => arcGenerator(d));
+console.log("Generated arcs:", arcs);
+
+// Define some colors for each slice.
+const colors = ['gold', 'purple', 'steelblue', 'orange', 'green', 'pink'];
+
+// Append each arc as a <path> element to the SVG.
+arcs.forEach((arcPath, i) => {
+  d3.select('svg')
+    .append('path')
+    .attr('d', arcPath)
+    .attr('fill', colors[i % colors.length]);
+});
+
+// Optionally, append a full red circle (if desired).
+let fullArc = arcGenerator({
   startAngle: 0,
   endAngle: 2 * Math.PI,
 });
-
-// Append the arc as a new path element to the existing <svg> element.
 d3.select('svg')
   .append('path')
-  .attr('d', arc)
+  .attr('d', fullArc)
   .attr('fill', 'red');
-
-
 
 async function init() {
   try {
