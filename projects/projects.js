@@ -1,26 +1,32 @@
 import { fetchJSON } from '../global.js';
 import * as d3 from 'https://unpkg.com/d3@7?module';
 
-console.log("projects.js is running!");
+// Create an arc generator with an inner radius of 0 and an outer radius of 50.
+const arcGenerator = d3.arc().innerRadius(0).outerRadius(50);
 
-let arcGenerator = d3.arc().innerRadius(0).outerRadius(50);
+// --- Pie Chart Section using d3.pie() ---
+// Define your data for the pie chart slices.
+const data = [1, 2];
 
-// Now use it for your pie chart code:
-let data = [1, 2];  // Example data
-let pieGenerator = d3.pie();
-let arcData = pieGenerator(data);
-let arcs = arcData.map(d => arcGenerator(d));
+// Use d3.pie() to compute the start and end angles automatically.
+const pieGenerator = d3.pie();
+const arcData = pieGenerator(data);
+console.log("Arc data:", arcData);
+
+// Generate arc path strings using the arc generator.
+const arcs = arcData.map(d => arcGenerator(d));
 console.log("Generated arcs:", arcs);
 
-// Append each arc to the SVG.
+// Define some colors for each slice.
 const colors = ['gold', 'purple'];
+
+// Append each arc as a <path> element to the SVG.
 arcs.forEach((arcPath, i) => {
   d3.select('svg')
     .append('path')
-    .attr('d', arcPath)
+    .attr('d', arcPath)              
     .attr('fill', colors[i % colors.length]);
 });
-
 
 async function init() {
   try {
