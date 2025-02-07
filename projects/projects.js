@@ -13,15 +13,14 @@ async function init() {
         }
 
         if (projectsContainer && projects) {
+            projectsContainer.innerHTML = '';  // Optionally clear out static content
             renderProjects(projects, projectsContainer, 'h2');
         }
     } catch (error) {
         console.error('Error:', error);
     }
-
-    const projects = await fetchJSON('../lib/projects.json');
-    console.log('Loaded projects:', projects);
 }
+
 
 function renderProjects(projects, container, headingLevel = 'h2') {
     projects.forEach(project => {
