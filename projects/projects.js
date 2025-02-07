@@ -18,7 +18,7 @@ d3.select('svg')
   .attr('d', arc)
   .attr('fill', 'red');
 
-  async function init() {
+async function init() {
     try {
         const projects = await fetchJSON('../lib/projects.json');
         console.log("Fetched projects:", projects); // Debug log
