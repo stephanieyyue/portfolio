@@ -21,6 +21,7 @@ d3.select('svg')
 async function init() {
     try {
         const projects = await fetchJSON('../lib/projects.json');
+        console.log("projects.js project!");
         console.log("Fetched projects:", projects); // Debug log
 
         const dynamicContainer = document.querySelector('.dynamic-projects');
