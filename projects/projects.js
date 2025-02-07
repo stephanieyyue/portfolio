@@ -2,7 +2,30 @@ import { fetchJSON } from '../global.js';
 
 console.log("projects.js is running!");
 
+function createVisualization(projects, container) {
+    // Create SVG element
+    const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+    svg.setAttribute("viewBox", "0 0 100 100");
+    svg.style.width = "20em";
+    svg.style.marginBlock = "2em";
+    svg.style.display = "block";
+
+    // Create circle
+    const circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+    circle.setAttribute("cx", "50");
+    circle.setAttribute("cy", "50");
+    circle.setAttribute("r", "50");
+    circle.setAttribute("fill", "red");
+
+    svg.appendChild(circle);
+    container.insertBefore(svg, container.firstChild);
+}
+
 function renderProjects(projects, container, headingLevel = 'h2') {
+    // Add visualization first
+    createVisualization(projects, container);
+
+    // Then render projects as before
     projects.forEach(project => {
         const article = document.createElement('article');
         
@@ -24,7 +47,6 @@ function renderProjects(projects, container, headingLevel = 'h2') {
         yearText.style.fontFamily = 'serif';
         yearText.style.fontStyle = 'italic';
         yearText.style.color = '#666';
-        yearText.style.marginTop = '0.5rem';
         
         textDiv.appendChild(description);
         textDiv.appendChild(yearText);
