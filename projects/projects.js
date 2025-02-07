@@ -19,20 +19,32 @@ d3.select('svg')
   .attr('fill', 'red');
 
 async function init() {
-    console.log("init() function started");
     try {
         console.log("Calling fetchJSON...");
-        //const projects = await fetchJSON('../lib/projects.json');
-        const projects = await Promise.resolve([{ title: "Test", year: "2024", image: "test.jpg", description: "Test project" }]);
-        console.log("Fetched projects:", projects); // This should log an array of project objects
+        const projects = await fetchJSON('../lib/projects.json');
+        console.log("Fetched projects:", projects); // Should log your project array
 
-        const dynamicContainer = document.querySelector('.dynamic-projects');
-        console.log("Dynamic container:", dynamicContainer); // Make sure this isn't null
-
+        // Attempt to select the dynamic container
+        let dynamicContainer = document.querySelector('.dynamic-projects');
+        console.log("Dynamic container:", dynamicContainer);
+        
+        // If the dynamic container doesn't exist, create it and append it
+        if (!dynamicContainer) {
+            dynamicContainer = document.createElement('div');
+            dynamicContainer.classList.add('dynamic-projects');
+            // Append the new container to the existing container that holds your static projects
+            const projectsContainer = document.querySelector('.projects');
+            projectsContainer.appendChild(dynamicContainer);
+            console.log("Created new dynamic container:", dynamicContainer);
+        }
+        
         const projectsTitle = document.querySelector('.projects-title');
 
+        // Optionally update the heading with the count of dynamic projects
         if (projectsTitle && projects) {
-            projectsTitle.textContent = `${projects.length} Projects`;
+            // If you want to add to the static count, you can count the static articles first:
+            const staticCount = document.querySelectorAll('.projects > article').length;
+            projectsTitle.textContent = `${staticCount + projects.length} Projects`;
         }
 
         if (dynamicContainer && projects) {
@@ -45,12 +57,10 @@ async function init() {
     }
 }
 
-
 init();
 
 function renderProjects(projects, container, headingLevel = 'h2') {
     projects.forEach(project => {
-        console.log("Project year:", project.year);
         console.log("Rendering project:", project); // Debug log
         const article = document.createElement('article');
         
