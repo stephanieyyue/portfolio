@@ -1,4 +1,4 @@
-import { fetchJSON, renderProjects } from '../global.js';
+import { fetchJSON} from '../global.js';
 
 console.log("projects.js is running!");
 
