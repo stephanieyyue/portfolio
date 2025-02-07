@@ -12,14 +12,6 @@ async function init() {
             projectsTitle.textContent = `${projects.length} Projects`;
         }
 
-        if (projectsContainer) {
-            const svg = projectsContainer.querySelector('svg');
-            projectsContainer.innerHTML = '';
-            if (svg) {
-                projectsContainer.appendChild(svg);
-            }
-        }
-
         if (projectsContainer && projects) {
             renderProjects(projects, projectsContainer, 'h2');
         }
