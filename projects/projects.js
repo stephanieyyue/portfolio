@@ -6,7 +6,7 @@ const arcGenerator = d3.arc().innerRadius(0).outerRadius(50);
 
 // --- Pie Chart Section using d3.pie() ---
 // Define your data for the pie chart slices.
-const data = [1, 2];
+const data = [1, 2,3,4,5,5];
 
 // Use d3.pie() to compute the start and end angles automatically.
 const pieGenerator = d3.pie();
