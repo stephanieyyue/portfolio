@@ -6,33 +6,6 @@ console.log("projects.js is running!");
 // Create an arc generator with an inner radius of 0 and an outer radius of 50.
 let arcGenerator = d3.arc().innerRadius(0).outerRadius(50);
 
-let data = [1, 2];
-
-// Calculate the total.
-let total = data.reduce((acc, d) => acc + d, 0);
-
-// Calculate start and end angles for each slice.
-let angle = 0;
-let arcData = [];
-for (let d of data) {
-  let endAngle = angle + (d / total) * 2 * Math.PI;
-  arcData.push({ startAngle: angle, endAngle: endAngle });
-  angle = endAngle;
-}
-
-// Generate the path for each slice.
-let arcs = arcData.map(d => arcGenerator(d));
-
-// Define colors for each slice.
-let colors = ['gold', 'purple'];
-
-// Append each arc as a path element in the SVG.
-arcs.forEach((arc, idx) => {
-  d3.select('svg')
-    .append('path')
-    .attr('d', arc)
-    .attr('fill', colors[idx]);
-});
 
 // Generate a full circle (arc path) by specifying the start and end angles in radians.
 let arc = arcGenerator({
