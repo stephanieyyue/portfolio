@@ -11,18 +11,20 @@ let arcData = sliceGenerator(data);
 // Define an arc generator for the pie slices.
 let arcGenerator = d3.arc().innerRadius(0).outerRadius(50);
 
-// Use a D3 ordinal color scale for automatic color assignment.
-let colorScale = d3.scaleOrdinal(d3.schemeCategory10);
+// Define a color scale using d3.schemeTableau10
+let colors = d3.scaleOrdinal(d3.schemeTableau10);
 
-// Append each arc as a <path> element to the SVG.
-arcData.forEach((d, i) => {
-  d3.select('svg')
-    .append('path')
-    .attr('d', arcGenerator(d)) // Generate the slice path.
-    .attr('fill', colorScale(i)) // Assign a color from the scale.
-    .attr('stroke', 'white') // Add a stroke to separate slices.
-    .attr('stroke-width', '1px');
-});
+// Select the SVG element and append the slices
+let svg = d3.select('svg');
+
+svg.selectAll("path")
+    .data(pieData)
+    .enter()
+    .append("path")
+    .attr("d", arcGenerator)
+    .attr("fill", (d, i) => colors(i))
+    .attr("transform", "translate(50,50)");  // Centering the pie chart inside SVG
+
 
 async function init() {
   try {
