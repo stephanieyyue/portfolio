@@ -290,10 +290,10 @@ nav {
 }
 
 svg {
+  display: block;
   max-width: 20em;
-  margin-block: 2em;
+  margin: 2em auto;
   overflow: visible;
-  grid-column: 1 / -1;
 }
 
 .projects {

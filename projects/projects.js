@@ -2,22 +2,6 @@ import { fetchJSON } from '../global.js';
 
 console.log("projects.js is running!");
 
-function addSvg(container) {
-    // Create SVG container before first child
-    const svg = d3.select(container)
-        .insert('svg', ':first-child')
-        .attr('width', '100')
-        .attr('height', '100')
-        .style('margin', '2em 0');
-
-    // Add circle
-    svg.append('circle')
-        .attr('cx', '50')
-        .attr('cy', '50')
-        .attr('r', '50')
-        .attr('fill', 'red');
-}
-
 async function init() {
     try {
         const projects = await fetchJSON('../lib/projects.json');
