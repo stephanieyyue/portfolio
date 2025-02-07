@@ -18,6 +18,9 @@ async function init() {
     } catch (error) {
         console.error('Error:', error);
     }
+
+    const projects = await fetchJSON('../lib/projects.json');
+    console.log('Loaded projects:', projects);
 }
 
 function renderProjects(projects, container, headingLevel = 'h2') {
