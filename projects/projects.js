@@ -20,27 +20,24 @@ d3.select('svg')
   .attr('d', arc)
   .attr('fill', 'red');
 
-async function init() {
+  async function init() {
     try {
         const projects = await fetchJSON('../lib/projects.json');
-        const projectsContainer = document.querySelector('.projects');
+        const dynamicContainer = document.querySelector('.dynamic-projects');
         const projectsTitle = document.querySelector('.projects-title');
 
         if (projectsTitle && projects) {
-            // This updates the heading text. If your static HTML already has "12 Projects",
-            // you might consider removing this or adjusting it.
             projectsTitle.textContent = `${projects.length} Projects`;
         }
 
-        if (projectsContainer && projects) {
-            // Remove or comment out this line so that static content is preserved:
-            // projectsContainer.innerHTML = '';
-            renderProjects(projects, projectsContainer, 'h2');
+        if (dynamicContainer && projects) {
+            renderProjects(projects, dynamicContainer, 'h2');
         }
     } catch (error) {
         console.error('Error:', error);
     }
 }
+
 
 init();
 
