@@ -13,13 +13,17 @@ async function init() {
         }
 
         if (projectsContainer && projects) {
-            projectsContainer.innerHTML = '';  // Optionally clear out static content
+            // Optionally clear any static markup before rendering:
+            projectsContainer.innerHTML = '';
             renderProjects(projects, projectsContainer, 'h2');
         }
     } catch (error) {
         console.error('Error:', error);
     }
 }
+
+init();
+
 
 
 function renderProjects(projects, container, headingLevel = 'h2') {
