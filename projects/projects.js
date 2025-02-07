@@ -32,7 +32,7 @@ async function init() {
 
         if (projectsContainer && projects) {
             // Clear static HTML if any.
-            projectsContainer.innerHTML = '';
+            //projectsContainer.innerHTML = '';
             renderProjects(projects, projectsContainer, 'h2');
         }
     } catch (error) {
