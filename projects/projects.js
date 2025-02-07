@@ -20,11 +20,13 @@ d3.select('svg')
 
 async function init() {
     try {
+        console.log("Calling fetchJSON...");
         const projects = await fetchJSON('../lib/projects.json');
-        console.log("projects.js project!");
-        console.log("Fetched projects:", projects); // Debug log
+        console.log("Fetched projects:", projects); // This should log an array of project objects
 
         const dynamicContainer = document.querySelector('.dynamic-projects');
+        console.log("Dynamic container:", dynamicContainer); // Make sure this isn't null
+
         const projectsTitle = document.querySelector('.projects-title');
 
         if (projectsTitle && projects) {
@@ -33,9 +35,11 @@ async function init() {
 
         if (dynamicContainer && projects) {
             renderProjects(projects, dynamicContainer, 'h2');
+        } else {
+            console.log("Either dynamicContainer or projects is missing.");
         }
     } catch (error) {
-        console.error('Error:', error);
+        console.error('Error in init():', error);
     }
 }
 
