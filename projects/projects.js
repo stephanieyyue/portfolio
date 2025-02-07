@@ -4,19 +4,19 @@ import * as d3 from 'https://unpkg.com/d3@7?module';
 // Define data for the pie chart
 let data = [1, 2, 3, 4, 5, 5];
 
-// Create a pie chart generator
-let pieGenerator = d3.pie();
-
-// Generate pie chart data
-let pieData = pieGenerator(data); // Moved this after the generator is defined
+// Define a color scale using d3.schemeTableau10
+let colors = d3.scaleOrdinal(d3.schemeTableau10); // This ensures different colors for slices
 
 // Define an arc generator for each slice
 let arcGenerator = d3.arc()
     .innerRadius(0)  // Pie chart (0 for no hole, donut chart otherwise)
     .outerRadius(50); // Radius of the pie
 
-// Define a color scale using d3.schemeTableau10
-let colors = d3.scaleOrdinal(d3.schemeTableau10); // Corrected: This is a function
+// Create a pie chart generator
+let pieGenerator = d3.pie(); // Ensure this is before generating pieData
+
+// Generate pie chart data
+let pieData = pieGenerator(data); // Now this is after defining pieGenerator
 
 // Select the SVG element
 let svg = d3.select("svg");
@@ -30,9 +30,8 @@ svg.selectAll("path")
     .attr("fill", (d, i) => colors(i)) // Use colors(i) instead of colors[i]
     .attr("stroke", "white") // Optional: Adds a white border between slices
     .attr("stroke-width", 1)
-    .attr("transform", "translate(50,50)"); // Center the pie chart
+    .attr("transform", "translate(50,50)"); // Centers the pie chart
 
-    
 async function init() {
   try {
     console.log("Calling fetchJSON...");
