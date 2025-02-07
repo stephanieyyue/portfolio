@@ -43,6 +43,7 @@ init();
 
 function renderProjects(projects, container, headingLevel = 'h2') {
     projects.forEach(project => {
+        console.log("Project year:", project.year);
         console.log("Rendering project:", project); // Debug log
         const article = document.createElement('article');
         
