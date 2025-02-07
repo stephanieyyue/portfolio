@@ -1,31 +1,27 @@
 import { fetchJSON } from '../global.js';
 import * as d3 from 'https://unpkg.com/d3@7?module';
 
-// Create an arc generator with an inner radius of 0 and an outer radius of 50.
-const arcGenerator = d3.arc().innerRadius(0).outerRadius(50);
+// Define the data array with multiple slices.
+let data = [1, 2, 3, 4, 5, 5];
 
-// --- Pie Chart Section using d3.pie() ---
-// Define your data for the pie chart slices.
-const data = [1, 2,3,4,5,5];
+// Create a pie chart generator.
+let sliceGenerator = d3.pie();
+let arcData = sliceGenerator(data);
 
-// Use d3.pie() to compute the start and end angles automatically.
-const pieGenerator = d3.pie();
-const arcData = pieGenerator(data);
-console.log("Arc data:", arcData);
+// Define an arc generator for the pie slices.
+let arcGenerator = d3.arc().innerRadius(0).outerRadius(50);
 
-// Generate arc path strings using the arc generator.
-const arcs = arcData.map(d => arcGenerator(d));
-console.log("Generated arcs:", arcs);
-
-// Define some colors for each slice.
-const colors = ['gold', 'purple'];
+// Use a D3 ordinal color scale for automatic color assignment.
+let colorScale = d3.scaleOrdinal(d3.schemeCategory10);
 
 // Append each arc as a <path> element to the SVG.
-arcs.forEach((arcPath, i) => {
+arcData.forEach((d, i) => {
   d3.select('svg')
     .append('path')
-    .attr('d', arcPath)              
-    .attr('fill', colors[i % colors.length]);
+    .attr('d', arcGenerator(d)) // Generate the slice path.
+    .attr('fill', colorScale(i)) // Assign a color from the scale.
+    .attr('stroke', 'white') // Add a stroke to separate slices.
+    .attr('stroke-width', '1px');
 });
 
 async function init() {
