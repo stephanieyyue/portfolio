@@ -1,6 +1,22 @@
 import { fetchJSON } from '../global.js';
+import * as d3 from 'd3';
 
 console.log("projects.js is running!");
+
+// Create an arc generator with an inner radius of 0 and an outer radius of 50.
+let arcGenerator = d3.arc().innerRadius(0).outerRadius(50);
+
+// Generate a full circle (arc path) by specifying the start and end angles in radians.
+let arc = arcGenerator({
+  startAngle: 0,
+  endAngle: 2 * Math.PI,
+});
+
+// Append a new path element to the SVG and use the generated arc path.
+d3.select('svg')
+  .append('path')
+  .attr('d', arc)
+  .attr('fill', 'red');
 
 async function init() {
     try {
@@ -13,7 +29,7 @@ async function init() {
         }
 
         if (projectsContainer && projects) {
-            // Optionally clear any static markup before rendering:
+            // Clear any static markup before rendering:
             projectsContainer.innerHTML = '';
             renderProjects(projects, projectsContainer, 'h2');
         }
@@ -22,9 +38,8 @@ async function init() {
     }
 }
 
+// Call init() only once.
 init();
-
-
 
 function renderProjects(projects, container, headingLevel = 'h2') {
     projects.forEach(project => {
@@ -59,5 +74,3 @@ function renderProjects(projects, container, headingLevel = 'h2') {
         container.appendChild(article);
     });
 }
-
-init();
