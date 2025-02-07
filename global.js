@@ -104,17 +104,30 @@ export function renderProjects(projects, containerElement, headingLevel = 'h2') 
       return;
   }
   
-  containerElement.innerHTML = '';
+  // Clear the container before rendering the projects.
+  // containerElement.innerHTML = '';
   
   projects.forEach(project => {
+      // Create an article element for each project.
       const article = document.createElement('article');
+      
+      // Set the inner HTML of the article.
+      // Notice that the description and year are wrapped in a <div class="project-text">
+      // and the year is given a class "project-year" for styling.
       article.innerHTML = `
           <${headingLevel}>${project.title}</${headingLevel}>
           <img src="${project.image}" alt="${project.title}">
-          <p>${project.description}</p>
+          <div class="project-text">
+              <p>${project.description}</p>
+              <p class="project-year">
+                  c. ${project.year}
+              </p>
+          </div>
       `;
+      
       containerElement.appendChild(article);
   });
 }
+
 
 
