@@ -3,21 +3,6 @@ import * as d3 from 'https://unpkg.com/d3@7?module';
 
 console.log("projects.js is running!");
 
-// Create an arc generator with an inner radius of 0 and an outer radius of 50.
-let arcGenerator = d3.arc().innerRadius(0).outerRadius(50);
-
-// Generate a full circle (arc path) by specifying the start and end angles in radians.
-let arc = arcGenerator({
-  startAngle: 0,
-  endAngle: 2 * Math.PI,
-});
-
-// Append the arc as a new path element to the existing <svg> element.
-d3.select('svg')
-  .append('path')
-  .attr('d', arc)
-  .attr('fill', 'red');
-
 let data = [1, 2];
 let total = 0;
 
@@ -44,6 +29,23 @@ arcs.forEach((arc, i) => {
     .attr('d', arc)              // Set the path data using the generated arc string
     .attr('fill', colors[i % colors.length]); // Optionally set a fill color for each slice
 });
+
+
+// Create an arc generator with an inner radius of 0 and an outer radius of 50.
+let arcGenerator = d3.arc().innerRadius(0).outerRadius(50);
+
+// Generate a full circle (arc path) by specifying the start and end angles in radians.
+let arc = arcGenerator({
+  startAngle: 0,
+  endAngle: 2 * Math.PI,
+});
+
+// Append the arc as a new path element to the existing <svg> element.
+d3.select('svg')
+  .append('path')
+  .attr('d', arc)
+  .attr('fill', 'red');
+
 
 
 async function init() {
