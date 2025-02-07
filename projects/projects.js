@@ -14,7 +14,6 @@ async function init() {
 
         if (projectsContainer) {
             projectsContainer.innerHTML = '';
-            addSvg(projectsContainer);
         }
 
         if (projectsContainer && projects) {
