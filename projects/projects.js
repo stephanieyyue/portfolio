@@ -19,80 +19,79 @@ d3.select('svg')
   .attr('fill', 'red');
 
 async function init() {
-    try {
-        console.log("Calling fetchJSON...");
-        const projects = await fetchJSON('../lib/projects.json');
-        console.log("Fetched projects:", projects);
-        console.log("Projects length:", projects.length);
+  try {
+    console.log("Calling fetchJSON...");
+    const projects = await fetchJSON('../lib/projects.json');
+    console.log("Fetched projects:", projects);
 
-        const projectsContainer = document.querySelector('.projects');
-        console.log("Projects container:", projectsContainer);
+    // Select the container that holds your projects.
+    const projectsContainer = document.querySelector('.projects');
+    const projectsTitle = document.querySelector('.projects-title');
 
-        const projectsTitle = document.querySelector('.projects-title');
+    // For debugging: set a background color on the container so we know it's visible.
+    projectsContainer.style.backgroundColor = 'lightyellow';
 
-        // Clear the container so only dynamic projects are shown.
-        if (projectsContainer) {
-            projectsContainer.innerHTML = '';
-            console.log("Cleared projects container.");
-        } else {
-            console.error("Projects container not found.");
-        }
+    // Clear the container so only dynamic projects from JSON are shown.
+    projectsContainer.innerHTML = '';
+    console.log("Cleared projects container. InnerHTML now:", projectsContainer.innerHTML);
 
-        if (projectsTitle && projects) {
-            projectsTitle.textContent = `${projects.length} Projects`;
-        }
-
-        console.log("About to render projects.");
-        renderProjects(projects, projectsContainer, 'h2');
-        console.log("renderProjects function called.");
-    } catch (error) {
-        console.error('Error in init():', error);
+    // Update the heading text with the project count.
+    if (projectsTitle && projects) {
+      projectsTitle.textContent = `${projects.length} Projects`;
     }
-}
 
+    console.log("About to render projects...");
+    renderProjects(projects, projectsContainer, 'h2');
+    console.log("After rendering projects, container innerHTML:", projectsContainer.innerHTML);
+  } catch (error) {
+    console.error('Error in init():', error);
+  }
+}
 
 init();
 
 function renderProjects(projects, container, headingLevel = 'h2') {
-    console.log("Inside renderProjects. Number of projects to render:", projects.length);
-    projects.forEach((project, index) => {
-        console.log(`Rendering project ${index + 1}:`, project);
-        
-        const article = document.createElement('article');
-        article.style.border = '1px solid red';
-        article.style.padding = '10px';
-        article.style.margin = '10px 0';
+  console.log("Inside renderProjects. Number of projects to render:", projects.length);
+  projects.forEach((project, index) => {
+    console.log(`Rendering project ${index + 1}:`, project);
 
-        const heading = document.createElement(headingLevel);
-        heading.textContent = project.title;
+    const article = document.createElement('article');
+    // Add styles for debugging so the articles are clearly visible.
+    article.style.border = '1px solid red';
+    article.style.padding = '10px';
+    article.style.margin = '10px 0';
+    article.style.backgroundColor = 'white';
 
-        const img = document.createElement('img');
-        img.src = project.image;
-        img.alt = project.title;
-        img.style.maxWidth = '100%';
+    const heading = document.createElement(headingLevel);
+    heading.textContent = project.title;
 
-        const textDiv = document.createElement('div');
-        textDiv.className = 'project-text';
+    const img = document.createElement('img');
+    img.src = project.image;
+    img.alt = project.title;
+    img.style.maxWidth = '100%';
 
-        const description = document.createElement('p');
-        description.textContent = project.description;
+    const textDiv = document.createElement('div');
+    textDiv.className = 'project-text';
 
-        // Create the year element.
-        const yearText = document.createElement('p');
-        yearText.textContent = `c. ${project.year}`;
-        yearText.style.fontFamily = 'Baskerville, "Baskerville Old Face", serif';
-        yearText.style.fontVariantNumeric = 'oldstyle-nums';
-        yearText.style.fontStyle = 'italic';
-        yearText.style.color = '#666';
+    const description = document.createElement('p');
+    description.textContent = project.description;
 
-        textDiv.appendChild(description);
-        textDiv.appendChild(yearText);
+    // Create the year element with your desired styling.
+    const yearText = document.createElement('p');
+    yearText.textContent = `c. ${project.year}`;
+    yearText.style.fontFamily = 'Baskerville, "Baskerville Old Face", serif';
+    yearText.style.fontVariantNumeric = 'oldstyle-nums';
+    yearText.style.fontStyle = 'italic';
+    yearText.style.color = '#666';
 
-        article.appendChild(heading);
-        article.appendChild(img);
-        article.appendChild(textDiv);
+    textDiv.appendChild(description);
+    textDiv.appendChild(yearText);
 
-        container.appendChild(article);
-    });
-    console.log("Finished rendering projects.");
+    article.appendChild(heading);
+    article.appendChild(img);
+    article.appendChild(textDiv);
+
+    container.appendChild(article);
+  });
+  console.log("Finished rendering projects.");
 }
