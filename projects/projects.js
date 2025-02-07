@@ -19,9 +19,11 @@ d3.select('svg')
   .attr('fill', 'red');
 
 async function init() {
+    console.log("init() function started");
     try {
         console.log("Calling fetchJSON...");
-        const projects = await fetchJSON('../lib/projects.json');
+        //const projects = await fetchJSON('../lib/projects.json');
+        const projects = await Promise.resolve([{ title: "Test", year: "2024", image: "test.jpg", description: "Test project" }]);
         console.log("Fetched projects:", projects); // This should log an array of project objects
 
         const dynamicContainer = document.querySelector('.dynamic-projects');
