@@ -2,33 +2,27 @@ import { fetchJSON } from '../global.js';
 
 console.log("projects.js is running!");
 
-function createVisualization(projects, container) {
-    // Create SVG element
-    const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-    svg.setAttribute("viewBox", "0 0 100 100");
-    svg.style.width = "20em";
-    svg.style.marginBlock = "2em";
-    svg.style.display = "block";
+function createVisualization(container) {
+    const svg = d3.select(container)
+        .insert('svg', ':first-child')
+        .attr('viewBox', '0 0 100 100')
+        .style('width', '20em')
+        .style('margin-block', '2em')
+        .style('display', 'block');
 
-    // Create circle
-    const circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
-    circle.setAttribute("cx", "50");
-    circle.setAttribute("cy", "50");
-    circle.setAttribute("r", "50");
-    circle.setAttribute("fill", "red");
-
-    svg.appendChild(circle);
-    container.insertBefore(svg, container.firstChild);
+    svg.append('circle')
+        .attr('cx', 50)
+        .attr('cy', 50)
+        .attr('r', 50)
+        .attr('fill', 'red');
 }
 
 function renderProjects(projects, container, headingLevel = 'h2') {
-    // Add visualization first
-    createVisualization(projects, container);
+    // Add visualization
+    createVisualization(container);
 
-    // Then render projects as before
     projects.forEach(project => {
         const article = document.createElement('article');
-        
         const heading = document.createElement(headingLevel);
         heading.textContent = project.title;
         
