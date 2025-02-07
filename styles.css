@@ -85,24 +85,6 @@ h1 {
   margin-block: 0.5em;
 }
 
-.projects {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(15em, 1fr));
-  gap: 1em;
-}
-
-.projects article {
-  display: grid;
-  grid-template-rows: subgrid;
-  grid-row: span 3;
-  gap: 1em;
-}
-
-.projects article h2 {
-  margin: 0;
-}
-
-
 .resume-container {
   max-width: 1200px;
   margin-inline: max(1em, (100% - 100ch) / 2);
@@ -289,15 +271,16 @@ nav {
   border: 2px solid red;
 }
 
+.projects {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1em;
+}
+
 svg {
   display: block;
   max-width: 20em;
   margin: 2em auto;
   overflow: visible;
-}
-
-.projects {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 1em;
+  grid-column: 1 / -1;
 }
