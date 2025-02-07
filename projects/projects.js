@@ -1,8 +1,6 @@
 import { fetchJSON } from '../global.js';
 import * as d3 from 'https://unpkg.com/d3@7?module';
 
-
-
 console.log("projects.js is running!");
 
 // Create an arc generator with an inner radius of 0 and an outer radius of 50.
@@ -23,6 +21,8 @@ d3.select('svg')
   async function init() {
     try {
         const projects = await fetchJSON('../lib/projects.json');
+        console.log("Fetched projects:", projects); // Debug log
+
         const dynamicContainer = document.querySelector('.dynamic-projects');
         const projectsTitle = document.querySelector('.projects-title');
 
@@ -43,6 +43,7 @@ init();
 
 function renderProjects(projects, container, headingLevel = 'h2') {
     projects.forEach(project => {
+        console.log("Rendering project:", project); // Debug log
         const article = document.createElement('article');
         
         const heading = document.createElement(headingLevel);
