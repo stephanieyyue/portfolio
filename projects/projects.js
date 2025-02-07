@@ -4,13 +4,15 @@ import * as d3 from 'https://unpkg.com/d3@7?module';
 console.log("projects.js is running!");
 
 let data = [1, 2,3,4,5,5];
+let sliceGenerator = d3.pie();
+let arcData = sliceGenerator(data);
 let total = 0;
 
 for (let d of data) {
   total += d;
 }
 let angle = 0;
-let arcData = [];
+//let arcData = [];
 
 for (let d of data) {
   let endAngle = angle + (d / total) * 2 * Math.PI;
