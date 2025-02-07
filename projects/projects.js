@@ -2,32 +2,36 @@ import { fetchJSON } from '../global.js';
 
 console.log("projects.js is running!");
 
-async function renderProjects(projects, container, headingLevel = 'h2') {
-    console.log('Projects data:', projects); // Debug line
+function renderProjects(projects, container, headingLevel = 'h2') {
     projects.forEach(project => {
         const article = document.createElement('article');
         
         const heading = document.createElement(headingLevel);
         heading.textContent = project.title;
         
-        const description = document.createElement('div');
-        description.className = 'project-text';
+        const img = document.createElement('img');
+        img.src = project.image;
+        img.alt = project.title;
         
-        const descriptionP = document.createElement('p');
-        descriptionP.textContent = project.description;
+        const textDiv = document.createElement('div');
+        textDiv.className = 'project-text';
         
-        const year = document.createElement('p');
-        year.textContent = `c. ${project.year}`;
-        year.style.fontFamily = 'serif';
-        year.style.fontStyle = 'italic';
-        year.style.color = '#666';
-        year.style.marginTop = '0.5rem';
+        const description = document.createElement('p');
+        description.textContent = project.description;
         
-        description.appendChild(descriptionP);
-        description.appendChild(year);
+        const yearText = document.createElement('p');
+        yearText.textContent = `c. ${project.year}`;
+        yearText.style.fontFamily = 'serif';
+        yearText.style.fontStyle = 'italic';
+        yearText.style.color = '#666';
+        yearText.style.marginTop = '0.5rem';
+        
+        textDiv.appendChild(description);
+        textDiv.appendChild(yearText);
         
         article.appendChild(heading);
-        article.appendChild(description);
+        article.appendChild(img);
+        article.appendChild(textDiv);
         
         container.appendChild(article);
     });
@@ -36,7 +40,6 @@ async function renderProjects(projects, container, headingLevel = 'h2') {
 async function init() {
     try {
         const projects = await fetchJSON('../lib/projects.json');
-        console.log('Fetched projects:', projects); // Debug line
         const projectsContainer = document.querySelector('.projects');
         const projectsTitle = document.querySelector('.projects-title');
 
