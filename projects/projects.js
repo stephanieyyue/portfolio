@@ -1,8 +1,9 @@
-import { fetchJSON} from '../global.js';
+import { fetchJSON } from '../global.js';
 
 console.log("projects.js is running!");
 
 async function renderProjects(projects, container, headingLevel = 'h2') {
+    console.log('Projects data:', projects); // Debug line
     projects.forEach(project => {
         const article = document.createElement('article');
         
@@ -20,6 +21,7 @@ async function renderProjects(projects, container, headingLevel = 'h2') {
         year.style.fontFamily = 'serif';
         year.style.fontStyle = 'italic';
         year.style.color = '#666';
+        year.style.marginTop = '0.5rem';
         
         description.appendChild(descriptionP);
         description.appendChild(year);
@@ -34,20 +36,18 @@ async function renderProjects(projects, container, headingLevel = 'h2') {
 async function init() {
     try {
         const projects = await fetchJSON('../lib/projects.json');
+        console.log('Fetched projects:', projects); // Debug line
         const projectsContainer = document.querySelector('.projects');
         const projectsTitle = document.querySelector('.projects-title');
 
-        // Update title to show count
         if (projectsTitle && projects) {
             projectsTitle.textContent = `${projects.length} Projects`;
         }
 
-        // Clear existing content first
         if (projectsContainer) {
             projectsContainer.innerHTML = '';
         }
 
-        // Render all projects
         if (projectsContainer && projects) {
             renderProjects(projects, projectsContainer, 'h2');
         }
