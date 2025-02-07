@@ -1,37 +1,38 @@
 import { fetchJSON } from '../global.js';
 import * as d3 from 'https://unpkg.com/d3@7?module';
 
-// Define data for the pie chart
+// Select the SVG element
+let svg = d3.select("svg")
+    .attr("width", 200)  // Ensure correct width and height
+    .attr("height", 200)
+    .append("g")
+    .attr("transform", "translate(100,100)");  // Center the pie chart
+
+// Data for the pie chart
 let data = [1, 2, 3, 4, 5, 5];
 
-// Define a color scale using d3.schemeTableau10
-let colors = d3.scaleOrdinal(d3.schemeTableau10); // This ensures different colors for slices
-
-// Define an arc generator for each slice
-let arcGenerator = d3.arc()
-    .innerRadius(0)  // Pie chart (0 for no hole, donut chart otherwise)
-    .outerRadius(50); // Radius of the pie
-
-// Create a pie chart generator
-let pieGenerator = d3.pie(); // Ensure this is before generating pieData
+// Define the color scale
+let colors = d3.scaleOrdinal(d3.schemeTableau10);
 
 // Generate pie chart data
-let pieData = pieGenerator(data); // Now this is after defining pieGenerator
+let pieGenerator = d3.pie(); // Ensure it's declared before use
+let pieData = pieGenerator(data); // Generates pie chart slices
 
-// Select the SVG element
-let svg = d3.select("svg");
+// Define an arc generator
+let arcGenerator = d3.arc()
+    .innerRadius(0)  // Pie chart (donut chart would use a nonzero value)
+    .outerRadius(80); // Set radius
 
 // Append the slices to the SVG
 svg.selectAll("path")
     .data(pieData)
     .enter()
     .append("path")
-    .attr("d", arcGenerator)
-    .attr("fill", (d, i) => colors(i)) // Use colors(i) instead of colors[i]
-    .attr("stroke", "white") // Optional: Adds a white border between slices
-    .attr("stroke-width", 1)
-    .attr("transform", "translate(50,50)"); // Centers the pie chart
-
+    .attr("d", arcGenerator) // Generates the shape
+    .attr("fill", (d, i) => colors(i)) // Assign colors dynamically
+    .attr("stroke", "white") // Add stroke for better visualization
+    .attr("stroke-width", 2);
+    
 async function init() {
   try {
     console.log("Calling fetchJSON...");
