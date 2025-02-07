@@ -22,40 +22,50 @@ async function init() {
     try {
         console.log("Calling fetchJSON...");
         const projects = await fetchJSON('../lib/projects.json');
-        console.log("Fetched projects:", projects); // Should log your project array
+        console.log("Fetched projects:", projects); // Should log an array of project objects
 
-        // Attempt to select the dynamic container
+        // Get the container that holds your static projects.
+        const projectsContainer = document.querySelector('.projects');
+        // Get static project titles (assuming they are inside <article> elements with an <h2> tag)
+        const staticArticles = projectsContainer.querySelectorAll('article');
+        const staticTitles = Array.from(staticArticles).map(article => {
+            const h2 = article.querySelector('h2');
+            return h2 ? h2.textContent.trim() : '';
+        });
+        console.log("Static titles:", staticTitles);
+
+        // Filter out dynamic projects that duplicate the static ones.
+        const filteredProjects = projects.filter(project => !staticTitles.includes(project.title));
+        console.log("Filtered projects (to render):", filteredProjects);
+
+        // Ensure there's a container for dynamic projects.
         let dynamicContainer = document.querySelector('.dynamic-projects');
-        console.log("Dynamic container:", dynamicContainer);
-        
-        // If the dynamic container doesn't exist, create it and append it
         if (!dynamicContainer) {
             dynamicContainer = document.createElement('div');
             dynamicContainer.classList.add('dynamic-projects');
-            // Append the new container to the existing container that holds your static projects
-            const projectsContainer = document.querySelector('.projects');
+            // Append the dynamic container at the end of the existing static projects container.
             projectsContainer.appendChild(dynamicContainer);
             console.log("Created new dynamic container:", dynamicContainer);
         }
-        
-        const projectsTitle = document.querySelector('.projects-title');
 
-        // Optionally update the heading with the count of dynamic projects
-        if (projectsTitle && projects) {
-            // If you want to add to the static count, you can count the static articles first:
-            const staticCount = document.querySelectorAll('.projects > article').length;
-            projectsTitle.textContent = `${staticCount + projects.length} Projects`;
+        // Optionally update the heading. For a total count, add the counts from static and dynamic:
+        const projectsTitleElement = document.querySelector('.projects-title');
+        if (projectsTitleElement) {
+            const totalCount = staticArticles.length + filteredProjects.length;
+            projectsTitleElement.textContent = `${totalCount} Projects`;
         }
 
-        if (dynamicContainer && projects) {
-            renderProjects(projects, dynamicContainer, 'h2');
+        // Render only the filtered dynamic projects.
+        if (dynamicContainer && filteredProjects) {
+            renderProjects(filteredProjects, dynamicContainer, 'h2');
         } else {
-            console.log("Either dynamicContainer or projects is missing.");
+            console.log("Either dynamicContainer or filtered projects is missing.");
         }
     } catch (error) {
         console.error('Error in init():', error);
     }
 }
+
 
 init();
 
