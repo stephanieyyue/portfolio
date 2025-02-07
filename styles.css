@@ -288,3 +288,9 @@ nav {
 #profile-stats {
   border: 2px solid red;
 }
+
+svg {
+  max-width: 20em;
+  margin-block: 2em;
+  overflow: visible;
+}
