@@ -3,7 +3,7 @@ import * as d3 from 'https://unpkg.com/d3@7?module';
 
 console.log("projects.js is running!");
 
-let data = [1, 2];
+let data = [1, 2,3,4,5,5];
 let total = 0;
 
 for (let d of data) {
