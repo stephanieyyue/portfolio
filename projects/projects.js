@@ -13,7 +13,11 @@ async function init() {
         }
 
         if (projectsContainer) {
+            const svg = projectsContainer.querySelector('svg');
             projectsContainer.innerHTML = '';
+            if (svg) {
+                projectsContainer.appendChild(svg);
+            }
         }
 
         if (projectsContainer && projects) {
