@@ -12,6 +12,10 @@ async function init() {
             projectsTitle.textContent = `${projects.length} Projects`;
         }
 
+        if (projectsContainer) {
+            projectsContainer.innerHTML = '';
+        }
+
         if (projectsContainer && projects) {
             renderProjects(projects, projectsContainer, 'h2');
         }
