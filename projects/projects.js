@@ -18,6 +18,34 @@ d3.select('svg')
   .attr('d', arc)
   .attr('fill', 'red');
 
+let data = [1, 2];
+let total = 0;
+
+for (let d of data) {
+  total += d;
+}
+let angle = 0;
+let arcData = [];
+
+for (let d of data) {
+  let endAngle = angle + (d / total) * 2 * Math.PI;
+  arcData.push({ startAngle: angle, endAngle });
+  angle = endAngle;
+}
+let arcs = arcData.map((d) => arcGenerator(d));
+
+// Define some colors for each slice (optional)
+const colors = ['gold', 'purple'];
+
+// For each arc in the arcs array, append a <path> element to the SVG.
+arcs.forEach((arc, i) => {
+  d3.select('svg')
+    .append('path')
+    .attr('d', arc)              // Set the path data using the generated arc string
+    .attr('fill', colors[i % colors.length]); // Optionally set a fill color for each slice
+});
+
+
 async function init() {
   try {
     console.log("Calling fetchJSON...");
