@@ -1,5 +1,6 @@
 import { fetchJSON } from '../global.js';
-import * as d3 from "https://unpkg.com/d3@7?module";
+import * as d3 from "https://cdn.jsdelivr.net/npm/d3@7/+esm";
+console.log("D3 Loaded in Console:", d3);
 
 console.log("projects.js is running!");
 
