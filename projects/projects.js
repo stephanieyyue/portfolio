@@ -84,8 +84,8 @@ async function renderPieChart(data) {
 
     console.log("🎨 Pie Data Generated:", arcData);
 
-    // ✅ Append Paths with Click Event
-    svg.selectAll("path")
+    // ✅ Append Paths with Click Event for Highlighting
+    let paths = svg.selectAll("path")
         .data(arcData)
         .enter()
         .append("path")
@@ -94,18 +94,20 @@ async function renderPieChart(data) {
         .style("stroke", "white")
         .style("stroke-width", "2px")
         .style("transition", "opacity 300ms ease-in-out")
-        .on("click", (event, d) => {
+        .on("click", function(event, d) {
             console.log(`🟢 Wedge Clicked: ${d.data.label}`);
 
+            // Toggle selection (if same year clicked again, reset)
             if (selectedYear === d.data.label) {
-                selectedYear = null; // Reset if clicked again
+                selectedYear = null; // Reset selection
+                d3.selectAll("path").attr("fill", (d, i) => colors(i)); // Restore original colors
                 renderProjects(projects, document.querySelector('.projects'), 'h2');
             } else {
                 selectedYear = d.data.label;
+                d3.selectAll("path").attr("fill", (d, i) => colors(i)); // Reset colors
+                d3.select(this).attr("fill", "#616161"); // Highlight selected wedge (Dark Gray)
                 filterAndRenderProjects(selectedYear);
             }
-
-            updatePieChart(selectedYear);
         });
 
     console.log("✅ Pie Chart Rendered!");
@@ -113,6 +115,7 @@ async function renderPieChart(data) {
     // ✅ ADD LEGEND RENDERING
     renderLegend(data, colors);
 }
+
 
 function filterAndRenderProjects(year) {
     console.log(`Filtering projects for year: ${year}`);
@@ -124,7 +127,6 @@ function filterAndRenderProjects(year) {
     projectsContainer.innerHTML = ''; // Clear existing projects
     renderProjects(filteredProjects, projectsContainer, 'h2');
 }
-
 
 
 
