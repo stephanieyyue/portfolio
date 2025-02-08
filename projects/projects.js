@@ -27,7 +27,7 @@ function setQuery(newQuery) {
 let searchInput = document.getElementsByClassName('searchBar')[0];
 
 searchInput.addEventListener('input', (event) => {
-    if (projects.length > 0) { 
+    if (projects.length > 0) {  // ✅ Only search if projects exist
         setQuery(event.target.value);
     } else {
         console.warn("Search attempted before projects loaded.");
@@ -91,31 +91,25 @@ function renderLegend(data, colors) {
 }
 
 
-
-
-
 async function fetchProjectData() {
     try {
         console.log("Fetching project data...");
-        const projects = await fetchJSON('../lib/projects.json');
+        projects = await fetchJSON('../lib/projects.json');  // ✅ Assign to global variable
         console.log("Fetched projects:", projects);
 
-        // Group projects by year and count occurrences
         let rolledData = d3.rollups(
             projects,
-            v => v.length,  // Count projects per year
+            v => v.length,  
             d => d.year
         );
 
         console.log("Processed Pie Chart Data:", rolledData);
 
-        // Convert to the required format for the pie chart
         let data = rolledData.map(([year, count]) => ({
             value: count,
             label: year
         }));
 
-        // Ensure the function exists before calling
         if (typeof renderPieChart === "function") {
             console.log("🔵 Calling renderPieChart...");
             renderPieChart(data);
@@ -129,39 +123,34 @@ async function fetchProjectData() {
 }
 
 
+
 fetchProjectData();
 
 console.log("Pie chart successfully rendered!");
 
 async function init() {
-  try {
-    console.log("Calling fetchJSON...");
-    const projects = await fetchJSON('../lib/projects.json');
-    console.log("Fetched projects:", projects);
+    try {
+        console.log("Calling fetchJSON...");
+        projects = await fetchJSON('../lib/projects.json');  // ✅ Assign to global variable
+        console.log("Fetched projects:", projects);
 
-    // Select the container that holds your projects.
-    const projectsContainer = document.querySelector('.projects');
-    const projectsTitle = document.querySelector('.projects-title');
+        const projectsContainer = document.querySelector('.projects');
+        const projectsTitle = document.querySelector('.projects-title');
 
-    // For debugging: set a background color on the container so we know it's visible.
-    projectsContainer.style.backgroundColor = 'lightyellow';
+        projectsContainer.innerHTML = '';
 
-    // Clear the container so only dynamic projects from JSON are shown.
-    projectsContainer.innerHTML = '';
-    console.log("Cleared projects container. InnerHTML now:", projectsContainer.innerHTML);
+        if (projectsTitle) {
+            projectsTitle.textContent = `${projects.length} Projects`;
+        }
 
-    // Update the heading text with the project count.
-    if (projectsTitle && projects) {
-      projectsTitle.textContent = `${projects.length} Projects`;
+        console.log("About to render projects...");
+        renderProjects(projects, projectsContainer, 'h2');
+        console.log("After rendering projects, container innerHTML:", projectsContainer.innerHTML);
+    } catch (error) {
+        console.error('Error in init():', error);
     }
-
-    console.log("About to render projects...");
-    renderProjects(projects, projectsContainer, 'h2');
-    console.log("After rendering projects, container innerHTML:", projectsContainer.innerHTML);
-  } catch (error) {
-    console.error('Error in init():', error);
-  }
 }
+
 
 init();
 
