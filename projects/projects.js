@@ -16,24 +16,23 @@ function setQuery(newQuery) {
 
     query = newQuery.toLowerCase();
 
-    // ✅ Filter only projects where the title includes the search query
-    let filteredProjects = projects.filter(project => 
-        project.title.toLowerCase().includes(query)
-    );
+    let filteredProjects = projects.filter(project => {
+        return project.title.toLowerCase().includes(query);
+    });
 
-    console.log("Filtered Projects:", filteredProjects);
+    console.log("🔍 Searching for:", query);
+    console.log("✅ Filtered Projects:", filteredProjects);
 
-    // ✅ Clear the container before rendering filtered projects
     const projectsContainer = document.querySelector('.projects');
-    projectsContainer.innerHTML = '';
+    projectsContainer.innerHTML = ''; // ✅ CLEAR OLD RESULTS
 
-    // ✅ Render only filtered projects (NOT the full list)
     if (filteredProjects.length > 0) {
         renderProjects(filteredProjects, projectsContainer, 'h2');
     } else {
         projectsContainer.innerHTML = "<p>No matching projects found.</p>";
     }
 }
+
 
 
 
@@ -107,17 +106,15 @@ function renderLegend(data, colors) {
 
 async function fetchProjectData() {
     try {
-        console.log("Fetching project data...");
-        projects = await fetchJSON('../lib/projects.json');  // ✅ Assign to global variable
-        console.log("Fetched projects:", projects);
+        console.log("📥 Fetching project data...");
+        projects = await fetchJSON('../lib/projects.json'); // ✅ Assign to Global Variable
+        console.log("📂 Projects Fetched:", projects);
 
         let rolledData = d3.rollups(
             projects,
-            v => v.length,  
+            v => v.length,
             d => d.year
         );
-
-        console.log("Processed Pie Chart Data:", rolledData);
 
         let data = rolledData.map(([year, count]) => ({
             value: count,
@@ -128,11 +125,10 @@ async function fetchProjectData() {
             console.log("🔵 Calling renderPieChart...");
             renderPieChart(data);
         } else {
-            console.error("Error: renderPieChart function is not defined!");
+            console.error("🚨 Error: renderPieChart function is not defined!");
         }
-
     } catch (error) {
-        console.error("Error fetching project data:", error);
+        console.error("🚨 Error fetching project data:", error);
     }
 }
 
@@ -169,11 +165,10 @@ async function init() {
 init();
 
 function renderProjects(filteredProjects, container, headingLevel = 'h2') {
-    console.log("Inside renderProjects. Number of projects to render:", filteredProjects.length);
+    console.log("🖌 Rendering Projects: Number to Render →", filteredProjects.length);
 
-    // Loop through only filtered projects
     filteredProjects.forEach((project, index) => {
-        console.log(`Rendering project ${index + 1}:`, project);
+        console.log(`🎨 Rendering project ${index + 1}:`, project.title);
 
         const article = document.createElement('article');
         article.style.border = '1px solid red';
@@ -212,5 +207,5 @@ function renderProjects(filteredProjects, container, headingLevel = 'h2') {
         container.appendChild(article);
     });
 
-    console.log("Finished rendering filtered projects.");
+    console.log("✅ Finished Rendering Projects");
 }
