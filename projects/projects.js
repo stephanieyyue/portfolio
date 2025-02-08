@@ -135,11 +135,11 @@ function filterAndRenderProjects(year) {
 
 
 
-function renderLegend(data, colors) {
+function renderLegend(data, colors, selectedYear = null) {
     console.log("🟢 Updating Legend...");
 
     let legendContainer = d3.select(".legend");
-    legendContainer.html(""); // ✅ Clear previous legend
+    legendContainer.html("");
 
     if (data.length === 0) {
         console.log("🛑 No legend to display.");
@@ -147,14 +147,19 @@ function renderLegend(data, colors) {
     }
 
     data.forEach((d, i) => {
+        const isSelected = selectedYear === null || d.label === selectedYear;
+        const color = isSelected ? colors(i) : "#808080"; // Use gray for non-selected years
+        
         legendContainer.append("li")
-            .attr("style", `--color: ${colors(i)}`)
-            .html(`<span class="swatch" style="background:${colors(i)}"></span> ${d.label} <em>(${d.value})</em>`);
+            .attr("style", `--color: ${color}`)
+            .html(`
+                <span class="swatch" style="background:${color}"></span>
+                ${d.label} <em>(${d.value})</em>
+            `);
     });
 
     console.log("✅ Legend successfully updated!");
 }
-
 
 async function fetchProjectData() {
     try {
