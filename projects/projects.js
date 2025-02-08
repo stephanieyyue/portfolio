@@ -17,13 +17,14 @@ function setQuery(newQuery) {
     renderProjects(filteredProjects, document.querySelector('.projects'), 'h2');
 }
 
-// Get the search input field
 let searchInput = document.getElementsByClassName('searchBar')[0];
 
-// Listen for changes in search input
 searchInput.addEventListener('input', (event) => {
-    console.log("Search input changed:", event.target.value);
-    setQuery(event.target.value);
+    if (projects.length > 0) {
+        setQuery(event.target.value);
+    } else {
+        console.warn("Search attempted before projects loaded.");
+    }
 });
 
 async function renderPieChart(data) {
