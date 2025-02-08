@@ -9,19 +9,28 @@ let projects = [];
 
 // Function to update query and filter projects
 function setQuery(newQuery) {
-    if (!projects || projects.length === 0) {  // ✅ Check if `projects` exists
+    if (!projects || projects.length === 0) {
         console.warn("Projects data is not available yet.");
         return;
     }
 
     query = newQuery.toLowerCase();
+
+    // ✅ Filter only projects where the title includes the search query
     let filteredProjects = projects.filter(project => {
-        return Object.values(project).join('\n').toLowerCase().includes(query);
+        return project.title.toLowerCase().includes(query);
     });
 
     console.log("Filtered Projects:", filteredProjects);
-    renderProjects(filteredProjects, document.querySelector('.projects'), 'h2');
+
+    // ✅ Clear the container before rendering filtered projects
+    const projectsContainer = document.querySelector('.projects');
+    projectsContainer.innerHTML = '';
+
+    // ✅ Render only filtered projects
+    renderProjects(filteredProjects, projectsContainer, 'h2');
 }
+
 
 
 let searchInput = document.getElementsByClassName('searchBar')[0];
