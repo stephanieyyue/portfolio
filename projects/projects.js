@@ -90,31 +90,36 @@ async function renderPieChart(data) {
         .enter()
         .append("path")
         .attr("d", arcGenerator)
-        .attr("fill", (d, i) => colors(i))
+        .attr("fill", (d, i) => colors(i))  // Default color
+        .attr("data-year", d => d.data.label)  // Store year for reference
         .style("stroke", "white")
         .style("stroke-width", "2px")
         .style("transition", "opacity 300ms ease-in-out")
         .on("click", function(event, d) {
             console.log(`🟢 Wedge Clicked: ${d.data.label}`);
 
-            // Toggle selection (if same year clicked again, reset)
+            // Toggle selection (if the same year clicked again, reset)
             if (selectedYear === d.data.label) {
                 selectedYear = null; // Reset selection
-                d3.selectAll("path").attr("fill", (d, i) => colors(i)); // Restore original colors
-                renderProjects(projects, document.querySelector('.projects'), 'h2');
+                paths.attr("fill", (d, i) => colors(i)); // Restore original colors
+                renderProjects(projects, document.querySelector('.projects'), 'h2'); // Show all projects
             } else {
                 selectedYear = d.data.label;
-                d3.selectAll("path").attr("fill", (d, i) => colors(i)); // Reset colors
-                d3.select(this).attr("fill", "#616161"); // Highlight selected wedge (Dark Gray)
-                filterAndRenderProjects(selectedYear);
+
+                // Reset colors and highlight only the selected wedge
+                paths.attr("fill", (d, i) => colors(i)); // Reset all wedges
+                d3.select(this).attr("fill", "#FFD700"); // Highlight selected wedge (Gold)
+
+                filterAndRenderProjects(selectedYear); // Filter projects
             }
         });
 
     console.log("✅ Pie Chart Rendered!");
-
+    
     // ✅ ADD LEGEND RENDERING
     renderLegend(data, colors);
 }
+
 
 
 function filterAndRenderProjects(year) {
