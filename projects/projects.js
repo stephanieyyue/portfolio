@@ -5,9 +5,12 @@ console.log("D3 Loaded in Console:", d3);
 console.log("projects.js is running!");
 
 async function renderPieChart(data) {
+    console.log("Rendering Pie Chart with Data:", data);
+
     let svg = d3.select("#pieChart")
         .attr("width", 400)
         .attr("height", 400)
+        .html("") // Clear previous SVG content to prevent duplication
         .append("g")
         .attr("transform", "translate(200, 200)");
 
@@ -34,7 +37,20 @@ async function renderPieChart(data) {
         .style("font-size", "12px")
         .style("fill", "#fff")
         .text(d => d.data.label);
+
+    d3.select(".legend").html("");
+
+    let legendContainer = d3.select(".legend"); 
+
+    data.forEach((d, i) => {
+        legendContainer.append("li")
+            .attr("style", `--color: ${colors(i)}`)  
+            .html(`<span class="swatch" style="background:${colors(i)}"></span> ${d.label} <em>(${d.value})</em>`);
+    });
+
+    console.log("Legend successfully added.");
 }
+
 
 
 async function fetchProjectData() {
