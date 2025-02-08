@@ -5,12 +5,11 @@ console.log("D3 Loaded in Console:", d3);
 console.log("projects.js is running!");
 
 async function renderPieChart(data) {
-    console.log("Rendering Pie Chart with Data:", data);
+    console.log("🔴 renderPieChart function is executing! Data received:", data);
 
     let svg = d3.select("#pieChart")
         .attr("width", 400)
         .attr("height", 400)
-        .html("") // Clear previous SVG content to prevent duplication
         .append("g")
         .attr("transform", "translate(200, 200)");
 
@@ -18,6 +17,8 @@ async function renderPieChart(data) {
     let pieGenerator = d3.pie().value(d => d.value);
     let arcData = pieGenerator(data);
     let arcGenerator = d3.arc().innerRadius(0).outerRadius(100);
+
+    console.log("🎨 Pie Data Generated:", arcData);
 
     svg.selectAll("path")
         .data(arcData)
@@ -38,18 +39,28 @@ async function renderPieChart(data) {
         .style("fill", "#fff")
         .text(d => d.data.label);
 
-    d3.select(".legend").html("");
+    console.log("✅ Pie Chart Rendered!");
+    
+    // ✅ ADD LEGEND RENDERING
+    renderLegend(data, colors);
+}
 
-    let legendContainer = d3.select(".legend"); 
+function renderLegend(data, colors) {
+    console.log("🟢 Adding Legend...");
+    
+    let legendContainer = d3.select(".legend");
+    legendContainer.html(""); // Clear previous legend
 
     data.forEach((d, i) => {
         legendContainer.append("li")
-            .attr("style", `--color: ${colors(i)}`)  
+            .attr("style", `--color: ${colors(i)}`)
             .html(`<span class="swatch" style="background:${colors(i)}"></span> ${d.label} <em>(${d.value})</em>`);
     });
 
-    console.log("Legend successfully added.");
+    console.log("✅ Legend successfully added!");
 }
+
+
 
 
 
