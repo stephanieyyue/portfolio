@@ -17,9 +17,9 @@ function setQuery(newQuery) {
     query = newQuery.toLowerCase();
 
     // ✅ Filter only projects where the title includes the search query
-    let filteredProjects = projects.filter(project => {
-        return project.title.toLowerCase().includes(query);
-    });
+    let filteredProjects = projects.filter(project => 
+        project.title.toLowerCase().includes(query)
+    );
 
     console.log("Filtered Projects:", filteredProjects);
 
@@ -27,9 +27,14 @@ function setQuery(newQuery) {
     const projectsContainer = document.querySelector('.projects');
     projectsContainer.innerHTML = '';
 
-    // ✅ Render only filtered projects
-    renderProjects(filteredProjects, projectsContainer, 'h2');
+    // ✅ Render only filtered projects (NOT the full list)
+    if (filteredProjects.length > 0) {
+        renderProjects(filteredProjects, projectsContainer, 'h2');
+    } else {
+        projectsContainer.innerHTML = "<p>No matching projects found.</p>";
+    }
 }
+
 
 
 
@@ -163,48 +168,49 @@ async function init() {
 
 init();
 
-function renderProjects(projects, container, headingLevel = 'h2') {
-  console.log("Inside renderProjects. Number of projects to render:", projects.length);
-  projects.forEach((project, index) => {
-    console.log(`Rendering project ${index + 1}:`, project);
+function renderProjects(filteredProjects, container, headingLevel = 'h2') {
+    console.log("Inside renderProjects. Number of projects to render:", filteredProjects.length);
 
-    const article = document.createElement('article');
-    // Add styles for debugging so the articles are clearly visible.
-    article.style.border = '1px solid red';
-    article.style.padding = '10px';
-    article.style.margin = '10px 0';
-    article.style.backgroundColor = 'white';
+    // Loop through only filtered projects
+    filteredProjects.forEach((project, index) => {
+        console.log(`Rendering project ${index + 1}:`, project);
 
-    const heading = document.createElement(headingLevel);
-    heading.textContent = project.title;
+        const article = document.createElement('article');
+        article.style.border = '1px solid red';
+        article.style.padding = '10px';
+        article.style.margin = '10px 0';
+        article.style.backgroundColor = 'white';
 
-    const img = document.createElement('img');
-    img.src = project.image;
-    img.alt = project.title;
-    img.style.maxWidth = '100%';
+        const heading = document.createElement(headingLevel);
+        heading.textContent = project.title;
 
-    const textDiv = document.createElement('div');
-    textDiv.className = 'project-text';
+        const img = document.createElement('img');
+        img.src = project.image;
+        img.alt = project.title;
+        img.style.maxWidth = '100%';
 
-    const description = document.createElement('p');
-    description.textContent = project.description;
+        const textDiv = document.createElement('div');
+        textDiv.className = 'project-text';
 
-    // Create the year element with your desired styling.
-    const yearText = document.createElement('p');
-    yearText.textContent = `c. ${project.year}`;
-    yearText.style.fontFamily = 'Baskerville, "Baskerville Old Face", serif';
-    yearText.style.fontVariantNumeric = 'oldstyle-nums';
-    yearText.style.fontStyle = 'italic';
-    yearText.style.color = '#666';
+        const description = document.createElement('p');
+        description.textContent = project.description;
 
-    textDiv.appendChild(description);
-    textDiv.appendChild(yearText);
+        const yearText = document.createElement('p');
+        yearText.textContent = `c. ${project.year}`;
+        yearText.style.fontFamily = 'Baskerville, "Baskerville Old Face", serif';
+        yearText.style.fontVariantNumeric = 'oldstyle-nums';
+        yearText.style.fontStyle = 'italic';
+        yearText.style.color = '#666';
 
-    article.appendChild(heading);
-    article.appendChild(img);
-    article.appendChild(textDiv);
+        textDiv.appendChild(description);
+        textDiv.appendChild(yearText);
 
-    container.appendChild(article);
-  });
-  console.log("Finished rendering projects.");
+        article.appendChild(heading);
+        article.appendChild(img);
+        article.appendChild(textDiv);
+
+        container.appendChild(article);
+    });
+
+    console.log("Finished rendering filtered projects.");
 }
