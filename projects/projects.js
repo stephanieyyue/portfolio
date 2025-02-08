@@ -34,14 +34,22 @@ function setQuery(newQuery) {
         updatePieChart(filteredProjects);
     } else {
         projectsContainer.innerHTML = "<p>No matching projects found.</p>";
+        updatePieChart([]); // ✅ Reset chart if no projects are found
     }
 }
+
 function updatePieChart(filteredProjects) {
     console.log("🔄 Updating Pie Chart with Filtered Projects...");
 
     // ✅ Clear old SVG content before rendering new chart
     let svg = d3.select("#pieChart");
     svg.selectAll("*").remove();
+
+    // ✅ If no filtered projects, just return and clear the chart
+    if (filteredProjects.length === 0) {
+        console.log("🛑 No projects match search. Pie chart cleared.");
+        return;
+    }
 
     // ✅ Recalculate the aggregated data (projects per year)
     let newRolledData = d3.rollups(
@@ -63,6 +71,7 @@ function updatePieChart(filteredProjects) {
 
 
 
+
 let searchInput = document.getElementsByClassName('searchBar')[0];
 
 searchInput.addEventListener('input', (event) => {
@@ -74,11 +83,17 @@ searchInput.addEventListener('input', (event) => {
 });
 
 
+
 async function renderPieChart(data) {
     console.log("🔴 renderPieChart function is executing! Data received:", data);
 
     let svg = d3.select("#pieChart");
     svg.selectAll("*").remove(); // ✅ Clear old chart
+
+    if (data.length === 0) {
+        console.log("🛑 No data to render in pie chart.");
+        return;
+    }
 
     let width = 400, height = 400;
     let radius = Math.min(width, height) / 2;
@@ -123,10 +138,15 @@ async function renderPieChart(data) {
 
 
 function renderLegend(data, colors) {
-    console.log("🟢 Adding Legend...");
-    
+    console.log("🟢 Updating Legend...");
+
     let legendContainer = d3.select(".legend");
-    legendContainer.html(""); // Clear previous legend
+    legendContainer.html(""); // ✅ Clear previous legend
+
+    if (data.length === 0) {
+        console.log("🛑 No legend to display.");
+        return;
+    }
 
     data.forEach((d, i) => {
         legendContainer.append("li")
@@ -134,19 +154,19 @@ function renderLegend(data, colors) {
             .html(`<span class="swatch" style="background:${colors(i)}"></span> ${d.label} <em>(${d.value})</em>`);
     });
 
-    console.log("✅ Legend successfully added!");
+    console.log("✅ Legend successfully updated!");
 }
 
 
 async function fetchProjectData() {
     try {
-        console.log("📥 Fetching project data...");
-        projects = await fetchJSON('../lib/projects.json'); // ✅ Assign to Global Variable
-        console.log("📂 Projects Fetched:", projects);
+        console.log("Fetching project data...");
+        projects = await fetchJSON('../lib/projects.json'); // ✅ Assign to global variable
+        console.log("Fetched projects:", projects);
 
         let rolledData = d3.rollups(
             projects,
-            v => v.length,
+            v => v.length,  
             d => d.year
         );
 
@@ -159,12 +179,14 @@ async function fetchProjectData() {
             console.log("🔵 Calling renderPieChart...");
             renderPieChart(data);
         } else {
-            console.error("🚨 Error: renderPieChart function is not defined!");
+            console.error("Error: renderPieChart function is not defined!");
         }
+
     } catch (error) {
-        console.error("🚨 Error fetching project data:", error);
+        console.error("Error fetching project data:", error);
     }
 }
+
 
 
 
