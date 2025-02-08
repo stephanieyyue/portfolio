@@ -9,6 +9,11 @@ let projects = [];
 
 // Function to update query and filter projects
 function setQuery(newQuery) {
+    if (!projects || projects.length === 0) {  // ✅ Check if `projects` exists
+        console.warn("Projects data is not available yet.");
+        return;
+    }
+
     query = newQuery.toLowerCase();
     let filteredProjects = projects.filter(project => {
         return Object.values(project).join('\n').toLowerCase().includes(query);
@@ -18,10 +23,11 @@ function setQuery(newQuery) {
     renderProjects(filteredProjects, document.querySelector('.projects'), 'h2');
 }
 
+
 let searchInput = document.getElementsByClassName('searchBar')[0];
 
 searchInput.addEventListener('input', (event) => {
-    if (projects.length > 0) {
+    if (projects.length > 0) { 
         setQuery(event.target.value);
     } else {
         console.warn("Search attempted before projects loaded.");
