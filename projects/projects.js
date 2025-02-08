@@ -87,54 +87,37 @@ searchInput.addEventListener('input', (event) => {
 async function renderPieChart(data) {
     console.log("🔴 renderPieChart function is executing! Data received:", data);
 
-    let svg = d3.select("#pieChart");
-    svg.selectAll("*").remove(); // ✅ Clear old chart
-
-    if (data.length === 0) {
-        console.log("🛑 No data to render in pie chart.");
-        return;
-    }
-
-    let width = 400, height = 400;
-    let radius = Math.min(width, height) / 2;
-
-    let g = svg
-        .attr("width", width)
-        .attr("height", height)
+    let svg = d3.select("#pieChart")
+        .attr("width", 400)
+        .attr("height", 400)
+        .html("")  // ✅ Clear old chart before updating
         .append("g")
-        .attr("transform", `translate(${width / 2}, ${height / 2})`);
+        .attr("transform", "translate(200, 200)");
 
     let colors = d3.scaleOrdinal(d3.schemeTableau10);
     let pieGenerator = d3.pie().value(d => d.value);
     let arcData = pieGenerator(data);
-    let arcGenerator = d3.arc().innerRadius(0).outerRadius(radius);
+    let arcGenerator = d3.arc().innerRadius(0).outerRadius(100);
 
     console.log("🎨 Pie Data Generated:", arcData);
 
-    g.selectAll("path")
+    // ✅ Append Paths with Hover Effect
+    svg.selectAll("path")
         .data(arcData)
         .enter()
         .append("path")
         .attr("d", arcGenerator)
         .attr("fill", (d, i) => colors(i))
         .style("stroke", "white")
-        .style("stroke-width", "2px");
-
-    g.selectAll("text")
-        .data(arcData)
-        .enter()
-        .append("text")
-        .attr("transform", d => `translate(${arcGenerator.centroid(d)})`)
-        .attr("text-anchor", "middle")
-        .style("font-size", "12px")
-        .style("fill", "#fff")
-        .text(d => d.data.label);
+        .style("stroke-width", "2px")
+        .style("transition", "opacity 300ms ease-in-out");  // ✅ Smooth fade effect
 
     console.log("✅ Pie Chart Rendered!");
-
-    // ✅ Update legend
+    
+    // ✅ ADD LEGEND RENDERING
     renderLegend(data, colors);
 }
+
 
 
 function renderLegend(data, colors) {
