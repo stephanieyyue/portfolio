@@ -8,10 +8,12 @@ let query = '';
 
 // Function to update query and filter projects
 function setQuery(newQuery) {
-    query = newQuery.toLowerCase();  // Normalize case sensitivity
+    query = newQuery.toLowerCase();
     let filteredProjects = projects.filter(project => {
-        return project.title.toLowerCase().includes(query);
+        return Object.values(project).join('\n').toLowerCase().includes(query);
     });
+
+    console.log("Filtered Projects:", filteredProjects);
     renderProjects(filteredProjects, document.querySelector('.projects'), 'h2');
 }
 
@@ -20,6 +22,7 @@ let searchInput = document.getElementsByClassName('searchBar')[0];
 
 // Listen for changes in search input
 searchInput.addEventListener('input', (event) => {
+    console.log("Search input changed:", event.target.value);
     setQuery(event.target.value);
 });
 
