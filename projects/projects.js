@@ -3,17 +3,17 @@ import * as d3 from "https://cdn.jsdelivr.net/npm/d3@7/+esm";
 
 console.log("projects.js is running!");
 
-let svg = d3.select('svg')
-  .attr('width', 300)
-  .attr('height', 300)
+let svg = d3.select("svg")
+  .attr("width", 400)
+  .attr("height", 400)
   .append("g")
-  .attr("transform", "translate(150, 150)");  // Center the pie chart
+  .attr("transform", "translate(200, 200)");  // Center the pie chart
 
 // Define data
 let data = [1, 2, 3, 4, 5];
 
-// Define a color scale
-let colors = d3.scaleOrdinal(d3.schemeTableau10); 
+// Create color scale
+let colors = d3.scaleOrdinal(d3.schemeTableau10);  
 
 // Create pie generator
 let pieGenerator = d3.pie();
@@ -28,10 +28,10 @@ svg.selectAll("path")
   .enter()
   .append("path")
   .attr("d", arcGenerator)
-  .attr("fill", (d, i) => colors(i))
-  .style("stroke", "#fff") // Add white borders
+  .attr("fill", (d, i) => colors(i))  // Assign colors dynamically
+  .style("stroke", "#fff")  // White stroke for better visibility
   .style("stroke-width", "2px");
-
+  
 console.log("Pie chart successfully rendered!");
 
 async function init() {
