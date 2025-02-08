@@ -320,3 +320,23 @@ svg {
   border-radius: 50%;
   margin-right: 8px;
 }
+
+#pieChartContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 20px auto;
+  width: 100%;
+  position: relative;
+  z-index: 2;  /* Ensure it stays above other content */
+}
+
+#pieChart {
+  display: block;
+  margin: auto;
+}
+
+.legend {
+  text-align: center;
+  margin-top: 10px;
+}
