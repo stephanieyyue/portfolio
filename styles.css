@@ -292,3 +292,22 @@ svg {
   overflow: visible;
   grid-column: 1 / -1;
 }
+
+.legend {
+  list-style: none;
+  padding: 0;
+}
+
+.legend li {
+  display: flex;
+  align-items: center;
+  margin-bottom: 5px;
+}
+
+.legend .swatch {
+  width: 12px;
+  height: 12px;
+  display: inline-block;
+  background-color: var(--color);
+  margin-right: 8px;
+}

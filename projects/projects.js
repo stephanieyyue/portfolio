@@ -10,28 +10,55 @@ let svg = d3.select("svg")
   .attr("transform", "translate(200, 200)");  // Center the pie chart
 
 // Define data
-let data = [1, 2, 3, 4, 5];
+let data = [
+    { value: 2, label: 'Apples' },
+    { value: 3, label: 'Oranges' },
+    { value: 4, label: 'Mangoes' },
+    { value: 4, label: 'Pears' },
+    { value: 5, label: 'Limes' },
+    { value: 5, label: 'Cherries' },
+];
 
 // Create color scale
 let colors = d3.scaleOrdinal(d3.schemeTableau10);  
 
 // Create pie generator
-let pieGenerator = d3.pie();
-let pieData = pieGenerator(data);
+let pieGenerator = d3.pie().value(d => d.value);
+let arcData = pieGenerator(data);
 
 // Create arc generator
 let arcGenerator = d3.arc().innerRadius(0).outerRadius(100);
 
-// Append pie slices
+let legend = d3.select(".legend");
+
+data.forEach((d, idx) => {
+    legend.append("li")
+        .attr("style", `--color:${colors(idx)}`) // Apply dynamic color
+        .html(`<span class="swatch"></span> ${d.label} <em>(${d.value})</em>`);
+});
+
+// Append Pie Slices
 svg.selectAll("path")
-  .data(pieData)
-  .enter()
-  .append("path")
-  .attr("d", arcGenerator)
-  .attr("fill", (d, i) => colors(i))  // Assign colors dynamically
-  .style("stroke", "#fff")  // White stroke for better visibility
-  .style("stroke-width", "2px");
-  
+    .data(arcData)
+    .enter()
+    .append("path")
+    .attr("d", arcGenerator)
+    .attr("fill", (d, i) => colors(i))
+    .style("stroke", "white")
+    .style("stroke-width", "2px");
+
+// Append Labels
+svg.selectAll("text")
+    .data(arcData)
+    .enter()
+    .append("text")
+    .attr("transform", d => `translate(${arcGenerator.centroid(d)})`)
+    .attr("text-anchor", "middle")
+    .style("font-size", "12px")
+    .style("fill", "#fff")
+    .text(d => d.data.label);
+
+
 console.log("Pie chart successfully rendered!");
 
 async function init() {
