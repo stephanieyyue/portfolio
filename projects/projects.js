@@ -4,65 +4,32 @@ console.log("D3 Loaded in Console:", d3);
 
 console.log("projects.js is running!");
 
-let svg = d3.select("#pieChart")
-  .attr("width", 300)   // Reduced size
-  .attr("height", 300)  // Reduced size
-  .append("g")
-  .attr("transform", "translate(150, 150)");
+async function fetchProjectData() {
+    try {
+        console.log("Fetching project data...");
+        const projects = await fetchJSON('../lib/projects.json');
+        console.log("Fetched projects:", projects);
 
-// Define data
-let projects = [/lib/projects.json];
-console.log("Projects:", projects);
+        let rolledData = d3.rollups(
+            projects,
+            v => v.length,
+            d => d.year
+        );
 
-let data = [
-    { value: 2, label: 'Apples' },
-    { value: 3, label: 'Oranges' },
-    { value: 4, label: 'Mangoes' },
-    { value: 4, label: 'Pears' },
-    { value: 5, label: 'Limes' },
-    { value: 5, label: 'Cherries' },
-];
+        let data = rolledData.map(([year, count]) => ({
+            value: count,
+            label: year
+        }));
 
-// Create color scale
-let colors = d3.scaleOrdinal(d3.schemeTableau10);  
+        console.log("Processed Pie Chart Data:", data);
 
-// Create pie generator
-let pieGenerator = d3.pie().value(d => d.value);
-let arcData = pieGenerator(data);
+        renderPieChart(data);
+    } catch (error) {
+        console.error("Error fetching project data:", error);
+    }
+}
 
-// Create arc generator
-let arcGenerator = d3.arc().innerRadius(0).outerRadius(100);
-let sliceGenerator = d3.pie().value((d) => d.value);
-
-let legendContainer = d3.select(".legend"); 
-
-data.forEach((d, i) => {
-    legendContainer.append("li")
-        .attr("style", `--color: ${colors(i)}`)  
-        .html(`<span class="swatch" style="background:${colors(i)}"></span> ${d.label} <em>(${d.value})</em>`);
-});
-
-// Append Pie Slices
-svg.selectAll("path")
-    .data(arcData)
-    .enter()
-    .append("path")
-    .attr("d", arcGenerator)
-    .attr("fill", (d, i) => colors(i))
-    .style("stroke", "white")
-    .style("stroke-width", "2px");
-
-// Append Labels
-svg.selectAll("text")
-    .data(arcData)
-    .enter()
-    .append("text")
-    .attr("transform", d => `translate(${arcGenerator.centroid(d)})`)
-    .attr("text-anchor", "middle")
-    .style("font-size", "12px")
-    .style("fill", "#fff")
-    .text(d => d.data.label);
-
+fetchProjectData();
 
 console.log("Pie chart successfully rendered!");
 
