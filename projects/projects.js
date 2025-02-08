@@ -5,6 +5,7 @@ console.log("D3 Loaded in Console:", d3);
 console.log("projects.js is running!");
 // Declare a variable to hold the search query
 let query = '';
+let projects = [];
 
 // Function to update query and filter projects
 function setQuery(newQuery) {
