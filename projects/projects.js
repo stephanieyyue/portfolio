@@ -73,7 +73,7 @@ async function renderPieChart(data) {
     let svg = d3.select("#pieChart")
         .attr("width", 400)
         .attr("height", 400)
-        .html("")  // ✅ Clear old chart before updating
+        .html("")
         .append("g")
         .attr("transform", "translate(200, 200)");
 
@@ -84,39 +84,43 @@ async function renderPieChart(data) {
 
     console.log("🎨 Pie Data Generated:", arcData);
 
-    // ✅ Append Paths with Click Event for Highlighting
+    // Append Paths with Click Event for Highlighting
     let paths = svg.selectAll("path")
         .data(arcData)
         .enter()
         .append("path")
         .attr("d", arcGenerator)
-        .attr("fill", (d, i) => colors(i))  // Default color
-        .attr("data-year", d => d.data.label)  // Store year for reference
+        .attr("fill", (d, i) => colors(i))
+        .attr("data-year", d => d.data.label)
         .style("stroke", "white")
         .style("stroke-width", "2px")
         .style("transition", "opacity 300ms ease-in-out")
         .on("click", function(event, d) {
             console.log(`🟢 Wedge Clicked: ${d.data.label}`);
 
-            // Toggle selection (if the same year clicked again, reset)
+            // Toggle selection
             if (selectedYear === d.data.label) {
-                selectedYear = null; // Reset selection
-                paths.attr("fill", (d, i) => colors(i)); // Restore original colors
-                renderProjects(projects, document.querySelector('.projects'), 'h2'); // Show all projects
+                selectedYear = null;
+                // Reset all wedges to original colors
+                paths.attr("fill", (d, i) => colors(i));
+                renderProjects(projects, document.querySelector('.projects'), 'h2');
+                updateLegendColors(data, colors, null); // Reset legend colors
             } else {
                 selectedYear = d.data.label;
-
-                // Reset colors and highlight only the selected wedge
-                paths.attr("fill", (d, i) => colors(i)); // Reset all wedges
-                d3.select(this).attr("fill", "#FFD700"); // Highlight selected wedge (Gold)
-
-                filterAndRenderProjects(selectedYear); // Filter projects
+                
+                // Update wedge colors
+                paths.attr("fill", (d) => {
+                    return d.data.label === selectedYear ? "#FFD700" : "#808080";
+                });
+                
+                filterAndRenderProjects(selectedYear);
+                updateLegendColors(data, colors, selectedYear); // Update legend with selected year
             }
         });
 
     console.log("✅ Pie Chart Rendered!");
     
-    // ✅ ADD LEGEND RENDERING
+    // Initial legend render
     renderLegend(data, colors);
 }
 
@@ -133,9 +137,23 @@ function filterAndRenderProjects(year) {
     renderProjects(filteredProjects, projectsContainer, 'h2');
 }
 
+function updateLegendColors(data, colors, selectedYear) {
+    d3.select(".legend")
+        .selectAll("li")
+        .each(function(d, i) {
+            const li = d3.select(this);
+            const year = data[i].label;
+            const color = selectedYear === null ? colors(i) : 
+                         year === selectedYear ? colors(i) : "#808080";
+            
+            li.select(".swatch")
+                .style("background", color);
+            
+            li.attr("style", `--color: ${color}`);
+        });
+}
 
-
-function renderLegend(data, colors, selectedYear = null) {
+function renderLegend(data, colors) {
     console.log("🟢 Updating Legend...");
 
     let legendContainer = d3.select(".legend");
@@ -147,13 +165,10 @@ function renderLegend(data, colors, selectedYear = null) {
     }
 
     data.forEach((d, i) => {
-        const isSelected = selectedYear === null || d.label === selectedYear;
-        const color = isSelected ? colors(i) : "#808080"; // Use gray for non-selected years
-        
         legendContainer.append("li")
-            .attr("style", `--color: ${color}`)
+            .attr("style", `--color: ${colors(i)}`)
             .html(`
-                <span class="swatch" style="background:${color}"></span>
+                <span class="swatch" style="background:${colors(i)}"></span>
                 ${d.label} <em>(${d.value})</em>
             `);
     });
