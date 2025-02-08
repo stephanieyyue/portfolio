@@ -6,6 +6,8 @@ console.log("projects.js is running!");
 // Declare a variable to hold the search query
 let query = '';
 let projects = [];
+let selectedYear = null;
+
 
 // Function to update query and filter projects
 function setQuery(newQuery) {
@@ -38,36 +40,17 @@ function setQuery(newQuery) {
     }
 }
 
-function updatePieChart(filteredProjects) {
-    console.log("🔄 Updating Pie Chart with Filtered Projects...");
+function updatePieChart(selectedYear) {
+    console.log(`🔄 Updating Pie Chart for Selected Year: ${selectedYear}`);
 
-    // ✅ Clear old SVG content before rendering new chart
-    let svg = d3.select("#pieChart");
-    svg.selectAll("*").remove();
+    let filteredData = selectedYear 
+        ? [{ label: selectedYear, value: projects.filter(p => p.year === selectedYear).length }]
+        : d3.rollups(projects, v => v.length, d => d.year)
+            .map(([year, count]) => ({ label: year, value: count }));
 
-    // ✅ If no filtered projects, just return and clear the chart
-    if (filteredProjects.length === 0) {
-        console.log("🛑 No projects match search. Pie chart cleared.");
-        return;
-    }
-
-    // ✅ Recalculate the aggregated data (projects per year)
-    let newRolledData = d3.rollups(
-        filteredProjects,
-        v => v.length,
-        d => d.year
-    );
-
-    let newData = newRolledData.map(([year, count]) => ({
-        value: count,
-        label: year
-    }));
-
-    console.log("📊 New Pie Chart Data:", newData);
-
-    // ✅ Render new Pie Chart
-    renderPieChart(newData);
+    renderPieChart(filteredData);
 }
+
 
 
 
@@ -101,7 +84,7 @@ async function renderPieChart(data) {
 
     console.log("🎨 Pie Data Generated:", arcData);
 
-    // ✅ Append Paths with Hover Effect
+    // ✅ Append Paths with Click Event
     svg.selectAll("path")
         .data(arcData)
         .enter()
@@ -110,13 +93,38 @@ async function renderPieChart(data) {
         .attr("fill", (d, i) => colors(i))
         .style("stroke", "white")
         .style("stroke-width", "2px")
-        .style("transition", "opacity 300ms ease-in-out");  // ✅ Smooth fade effect
+        .style("transition", "opacity 300ms ease-in-out")
+        .on("click", (event, d) => {
+            console.log(`🟢 Wedge Clicked: ${d.data.label}`);
+
+            if (selectedYear === d.data.label) {
+                selectedYear = null; // Reset if clicked again
+                renderProjects(projects, document.querySelector('.projects'), 'h2');
+            } else {
+                selectedYear = d.data.label;
+                filterAndRenderProjects(selectedYear);
+            }
+
+            updatePieChart(selectedYear);
+        });
 
     console.log("✅ Pie Chart Rendered!");
-    
+
     // ✅ ADD LEGEND RENDERING
     renderLegend(data, colors);
 }
+
+function filterAndRenderProjects(year) {
+    console.log(`Filtering projects for year: ${year}`);
+    let filteredProjects = projects.filter(project => project.year === year);
+
+    console.log("Filtered Projects:", filteredProjects);
+
+    const projectsContainer = document.querySelector('.projects');
+    projectsContainer.innerHTML = ''; // Clear existing projects
+    renderProjects(filteredProjects, projectsContainer, 'h2');
+}
+
 
 
 
