@@ -3,6 +3,25 @@ import * as d3 from "https://cdn.jsdelivr.net/npm/d3@7.9.0/+esm";
 console.log("D3 Loaded in Console:", d3);
 
 console.log("projects.js is running!");
+// Declare a variable to hold the search query
+let query = '';
+
+// Function to update query and filter projects
+function setQuery(newQuery) {
+    query = newQuery.toLowerCase();  // Normalize case sensitivity
+    let filteredProjects = projects.filter(project => {
+        return project.title.toLowerCase().includes(query);
+    });
+    renderProjects(filteredProjects, document.querySelector('.projects'), 'h2');
+}
+
+// Get the search input field
+let searchInput = document.getElementsByClassName('searchBar')[0];
+
+// Listen for changes in search input
+searchInput.addEventListener('input', (event) => {
+    setQuery(event.target.value);
+});
 
 async function renderPieChart(data) {
     console.log("🔴 renderPieChart function is executing! Data received:", data);
