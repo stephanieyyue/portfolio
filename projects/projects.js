@@ -10,7 +10,7 @@ let projects = [];
 // Function to update query and filter projects
 function setQuery(newQuery) {
     if (!projects || projects.length === 0) {
-        console.warn("Projects data is not available yet.");
+        console.warn("🚨 Projects data is not available yet.");
         return;
     }
 
@@ -24,14 +24,15 @@ function setQuery(newQuery) {
     console.log("✅ Filtered Projects:", filteredProjects);
 
     const projectsContainer = document.querySelector('.projects');
-    projectsContainer.innerHTML = ''; // ✅ CLEAR OLD RESULTS
+    projectsContainer.innerHTML = ''; // ✅ ENSURE OLD PROJECTS ARE REMOVED
 
     if (filteredProjects.length > 0) {
-        renderProjects(filteredProjects, projectsContainer, 'h2');
+        renderProjects(filteredProjects, projectsContainer, 'h2'); // ✅ Pass only filtered projects
     } else {
         projectsContainer.innerHTML = "<p>No matching projects found.</p>";
     }
 }
+
 
 
 
@@ -43,7 +44,7 @@ searchInput.addEventListener('input', (event) => {
     if (projects.length > 0) {  // ✅ Only search if projects exist
         setQuery(event.target.value);
     } else {
-        console.warn("Search attempted before projects loaded.");
+        console.warn("🚨 Search attempted before projects loaded.");
     }
 });
 
@@ -166,6 +167,8 @@ init();
 
 function renderProjects(filteredProjects, container, headingLevel = 'h2') {
     console.log("🖌 Rendering Projects: Number to Render →", filteredProjects.length);
+    
+    container.innerHTML = ''; // ✅ CLEAR PREVIOUS PROJECTS
 
     filteredProjects.forEach((project, index) => {
         console.log(`🎨 Rendering project ${index + 1}:`, project.title);
