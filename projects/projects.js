@@ -30,12 +30,12 @@ let arcData = pieGenerator(data);
 let arcGenerator = d3.arc().innerRadius(0).outerRadius(100);
 let sliceGenerator = d3.pie().value((d) => d.value);
 
-let legend = d3.select(".legend");
+let legendContainer = d3.select(".legend"); 
 
-data.forEach((d, idx) => {
-    legend.append("li")
-        .attr("style", `--color:${colors(idx)}`) // Apply dynamic color
-        .html(`<span class="swatch"></span> ${d.label} <em>(${d.value})</em>`);
+data.forEach((d, i) => {
+    legendContainer.append("li")
+        .attr("style", `--color: ${colors(i)}`)  // Use dynamic color mapping
+        .html(`<span class="swatch" style="background:${colors(i)}"></span> ${d.label} <em>(${d.value})</em>`);
 });
 
 // Append Pie Slices
