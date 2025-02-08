@@ -11,6 +11,9 @@ let svg = d3.select("#pieChart")
   .attr("transform", "translate(150, 150)");
 
 // Define data
+let projects = [/lib/projects.json];
+console.log("Projects:", projects);
+
 let data = [
     { value: 2, label: 'Apples' },
     { value: 3, label: 'Oranges' },
