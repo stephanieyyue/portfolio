@@ -295,19 +295,29 @@ svg {
 
 .legend {
   list-style: none;
-  padding: 0;
+  padding: 10px;
+  background: white;
+  border: 1px solid #ccc;
+  position: absolute;
+  top: 80px; /* Adjust this to place it near the pie chart */
+  right: 50px; /* Moves it towards the right */
+  z-index: 1000; /* Ensures it appears above other elements */
+  box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
 }
 
 .legend li {
   display: flex;
   align-items: center;
   margin-bottom: 5px;
+  font-size: 14px;
+  font-family: Arial, sans-serif;
 }
 
 .legend .swatch {
-  width: 12px;
-  height: 12px;
+  width: 14px;
+  height: 14px;
   display: inline-block;
+  border-radius: 50%;
   background-color: var(--color);
   margin-right: 8px;
 }
