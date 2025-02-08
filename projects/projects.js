@@ -16,6 +16,7 @@ function setQuery(newQuery) {
 
     query = newQuery.toLowerCase();
 
+    // ✅ Filter only projects where the title includes the search query
     let filteredProjects = projects.filter(project => {
         return project.title.toLowerCase().includes(query);
     });
@@ -24,7 +25,7 @@ function setQuery(newQuery) {
     console.log("✅ Filtered Projects:", filteredProjects);
 
     const projectsContainer = document.querySelector('.projects');
-    projectsContainer.innerHTML = ''; // ✅ ENSURE OLD PROJECTS ARE REMOVED
+    projectsContainer.innerHTML = ''; // ✅ Clear old projects
 
     if (filteredProjects.length > 0) {
         renderProjects(filteredProjects, projectsContainer, 'h2'); // ✅ Pass only filtered projects
@@ -34,15 +35,11 @@ function setQuery(newQuery) {
 }
 
 
-
-
-
-
 let searchInput = document.getElementsByClassName('searchBar')[0];
 
 searchInput.addEventListener('input', (event) => {
-    if (projects.length > 0) {  // ✅ Only search if projects exist
-        setQuery(event.target.value);
+    if (projects.length > 0) {  
+        setQuery(event.target.value); // ✅ Filter projects in real-time
     } else {
         console.warn("🚨 Search attempted before projects loaded.");
     }
