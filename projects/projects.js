@@ -4,7 +4,7 @@ console.log("D3 Loaded in Console:", d3);
 
 console.log("projects.js is running!");
 
-function renderPieChart(data) {
+async function renderPieChart(data) {
     let svg = d3.select("#pieChart")
         .attr("width", 400)
         .attr("height", 400)
