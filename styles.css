@@ -371,13 +371,10 @@ svg {
   display: flex;
   flex-direction: column;
   gap: 8px;
-  padding: 0;
-}
-
-.legend li {
-  display: flex;
-  align-items: center;
-  font-size: 14px;
+  padding: 10px;
+  background: white;
+  border-radius: 5px;
+  box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
 }
 
 .swatch {
