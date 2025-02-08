@@ -76,6 +76,7 @@ async function fetchProjectData() {
 
         // Ensure the function exists before calling
         if (typeof renderPieChart === "function") {
+            console.log("🔵 Calling renderPieChart...");
             renderPieChart(data);
         } else {
             console.error("Error: renderPieChart function is not defined!");
