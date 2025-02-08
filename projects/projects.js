@@ -4,30 +4,72 @@ console.log("D3 Loaded in Console:", d3);
 
 console.log("projects.js is running!");
 
+function renderPieChart(data) {
+    let svg = d3.select("#pieChart")
+        .attr("width", 400)
+        .attr("height", 400)
+        .append("g")
+        .attr("transform", "translate(200, 200)");
+
+    let colors = d3.scaleOrdinal(d3.schemeTableau10);
+    let pieGenerator = d3.pie().value(d => d.value);
+    let arcData = pieGenerator(data);
+    let arcGenerator = d3.arc().innerRadius(0).outerRadius(100);
+
+    svg.selectAll("path")
+        .data(arcData)
+        .enter()
+        .append("path")
+        .attr("d", arcGenerator)
+        .attr("fill", (d, i) => colors(i))
+        .style("stroke", "white")
+        .style("stroke-width", "2px");
+
+    svg.selectAll("text")
+        .data(arcData)
+        .enter()
+        .append("text")
+        .attr("transform", d => `translate(${arcGenerator.centroid(d)})`)
+        .attr("text-anchor", "middle")
+        .style("font-size", "12px")
+        .style("fill", "#fff")
+        .text(d => d.data.label);
+}
+
+
 async function fetchProjectData() {
     try {
         console.log("Fetching project data...");
         const projects = await fetchJSON('../lib/projects.json');
         console.log("Fetched projects:", projects);
 
+        // Group projects by year and count occurrences
         let rolledData = d3.rollups(
             projects,
-            v => v.length,
+            v => v.length,  // Count projects per year
             d => d.year
         );
 
+        console.log("Processed Pie Chart Data:", rolledData);
+
+        // Convert to the required format for the pie chart
         let data = rolledData.map(([year, count]) => ({
             value: count,
             label: year
         }));
 
-        console.log("Processed Pie Chart Data:", data);
+        // Ensure the function exists before calling
+        if (typeof renderPieChart === "function") {
+            renderPieChart(data);
+        } else {
+            console.error("Error: renderPieChart function is not defined!");
+        }
 
-        renderPieChart(data);
     } catch (error) {
         console.error("Error fetching project data:", error);
     }
 }
+
 
 fetchProjectData();
 
