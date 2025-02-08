@@ -28,6 +28,7 @@ let arcData = pieGenerator(data);
 
 // Create arc generator
 let arcGenerator = d3.arc().innerRadius(0).outerRadius(100);
+let sliceGenerator = d3.pie().value((d) => d.value);
 
 let legend = d3.select(".legend");
 
