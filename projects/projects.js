@@ -16,7 +16,7 @@ function setQuery(newQuery) {
 
     query = newQuery.toLowerCase();
 
-    // ✅ Filter only projects where the title includes the search query
+    // ✅ Filter projects based on title
     let filteredProjects = projects.filter(project => {
         return project.title.toLowerCase().includes(query);
     });
@@ -28,40 +28,75 @@ function setQuery(newQuery) {
     projectsContainer.innerHTML = ''; // ✅ Clear old projects
 
     if (filteredProjects.length > 0) {
-        renderProjects(filteredProjects, projectsContainer, 'h2'); // ✅ Pass only filtered projects
+        renderProjects(filteredProjects, projectsContainer, 'h2'); // ✅ Render filtered projects
+
+        // ✅ Update Pie Chart & Legend
+        updatePieChart(filteredProjects);
     } else {
         projectsContainer.innerHTML = "<p>No matching projects found.</p>";
     }
 }
+function updatePieChart(filteredProjects) {
+    console.log("🔄 Updating Pie Chart with Filtered Projects...");
+
+    // ✅ Clear old SVG content before rendering new chart
+    let svg = d3.select("#pieChart");
+    svg.selectAll("*").remove();
+
+    // ✅ Recalculate the aggregated data (projects per year)
+    let newRolledData = d3.rollups(
+        filteredProjects,
+        v => v.length,
+        d => d.year
+    );
+
+    let newData = newRolledData.map(([year, count]) => ({
+        value: count,
+        label: year
+    }));
+
+    console.log("📊 New Pie Chart Data:", newData);
+
+    // ✅ Render new Pie Chart
+    renderPieChart(newData);
+}
+
 
 
 let searchInput = document.getElementsByClassName('searchBar')[0];
 
 searchInput.addEventListener('input', (event) => {
-    if (projects.length > 0) {  
-        setQuery(event.target.value); // ✅ Filter projects in real-time
+    if (projects.length > 0) {
+        setQuery(event.target.value);
     } else {
         console.warn("🚨 Search attempted before projects loaded.");
     }
 });
 
+
 async function renderPieChart(data) {
     console.log("🔴 renderPieChart function is executing! Data received:", data);
 
-    let svg = d3.select("#pieChart")
-        .attr("width", 400)
-        .attr("height", 400)
+    let svg = d3.select("#pieChart");
+    svg.selectAll("*").remove(); // ✅ Clear old chart
+
+    let width = 400, height = 400;
+    let radius = Math.min(width, height) / 2;
+
+    let g = svg
+        .attr("width", width)
+        .attr("height", height)
         .append("g")
-        .attr("transform", "translate(200, 200)");
+        .attr("transform", `translate(${width / 2}, ${height / 2})`);
 
     let colors = d3.scaleOrdinal(d3.schemeTableau10);
     let pieGenerator = d3.pie().value(d => d.value);
     let arcData = pieGenerator(data);
-    let arcGenerator = d3.arc().innerRadius(0).outerRadius(100);
+    let arcGenerator = d3.arc().innerRadius(0).outerRadius(radius);
 
     console.log("🎨 Pie Data Generated:", arcData);
 
-    svg.selectAll("path")
+    g.selectAll("path")
         .data(arcData)
         .enter()
         .append("path")
@@ -70,7 +105,7 @@ async function renderPieChart(data) {
         .style("stroke", "white")
         .style("stroke-width", "2px");
 
-    svg.selectAll("text")
+    g.selectAll("text")
         .data(arcData)
         .enter()
         .append("text")
@@ -81,10 +116,11 @@ async function renderPieChart(data) {
         .text(d => d.data.label);
 
     console.log("✅ Pie Chart Rendered!");
-    
-    // ✅ ADD LEGEND RENDERING
+
+    // ✅ Update legend
     renderLegend(data, colors);
 }
+
 
 function renderLegend(data, colors) {
     console.log("🟢 Adding Legend...");
