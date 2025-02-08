@@ -5,10 +5,10 @@ console.log("D3 Loaded in Console:", d3);
 console.log("projects.js is running!");
 
 let svg = d3.select("#pieChart")
-  .attr("width", 400)
-  .attr("height", 400)
+  .attr("width", 300)   // Reduced size
+  .attr("height", 300)  // Reduced size
   .append("g")
-  .attr("transform", "translate(200, 200)");
+  .attr("transform", "translate(150, 150)");
 
 // Define data
 let data = [

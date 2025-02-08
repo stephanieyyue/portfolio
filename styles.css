@@ -321,22 +321,35 @@ svg {
   margin-right: 8px;
 }
 
-#pieChartContainer {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin: 20px auto;
-  width: 100%;
-  position: relative;
-  z-index: 2;  /* Ensure it stays above other content */
+.projects-title {
+  text-align: center;
+  font-size: 2em;
+  margin-bottom: 20px;
 }
 
 #pieChart {
   display: block;
-  margin: auto;
+  margin: 0 auto;
 }
 
 .legend {
-  text-align: center;
+  list-style: none;
+  display: flex;
+  justify-content: center;
+  gap: 15px;
   margin-top: 10px;
+  padding: 0;
 }
+
+.legend li {
+  display: flex;
+  align-items: center;
+}
+
+.swatch {
+  width: 12px;
+  height: 12px;
+  display: inline-block;
+  margin-right: 5px;
+}
+
