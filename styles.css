@@ -298,10 +298,10 @@ svg {
   padding: 10px;
   background: white;
   border: 1px solid #ccc;
-  position: absolute;
-  top: 80px; /* Adjust this to place it near the pie chart */
-  right: 50px; /* Moves it towards the right */
-  z-index: 1000; /* Ensures it appears above other elements */
+  position: absolute;  /* Fix it in place */
+  top: 80px;  /* Adjust height */
+  left: 600px;  /* Move it to the right of the pie chart */
+  z-index: 1000;  /* Keeps it above other elements */
   box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
 }
 
@@ -318,6 +318,5 @@ svg {
   height: 14px;
   display: inline-block;
   border-radius: 50%;
-  background-color: var(--color);
   margin-right: 8px;
 }

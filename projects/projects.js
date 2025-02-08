@@ -34,7 +34,7 @@ let legendContainer = d3.select(".legend");
 
 data.forEach((d, i) => {
     legendContainer.append("li")
-        .attr("style", `--color: ${colors(i)}`)  // Use dynamic color mapping
+        .attr("style", `--color: ${colors(i)}`)  
         .html(`<span class="swatch" style="background:${colors(i)}"></span> ${d.label} <em>(${d.value})</em>`);
 });
 
