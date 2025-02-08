@@ -9,23 +9,28 @@ let svg = d3.select('svg')
   .append("g")
   .attr("transform", "translate(150, 150)");  // Center the pie chart
 
+// Define data
+let data = [1, 2, 3, 4, 5];
+
 // Define a color scale
-let colors = d3.scaleOrdinal(d3.schemeTableau10);
+let colors = d3.scaleOrdinal(d3.schemeTableau10); 
 
 // Create pie generator
 let pieGenerator = d3.pie();
-let pieData = pieGenerator([1, 2, 3, 4, 5]);
+let pieData = pieGenerator(data);
 
 // Create arc generator
 let arcGenerator = d3.arc().innerRadius(0).outerRadius(100);
 
-// Append slices
+// Append pie slices
 svg.selectAll("path")
   .data(pieData)
   .enter()
   .append("path")
   .attr("d", arcGenerator)
-  .attr("fill", (d, i) => colors(i));
+  .attr("fill", (d, i) => colors(i))
+  .style("stroke", "#fff") // Add white borders
+  .style("stroke-width", "2px");
 
 console.log("Pie chart successfully rendered!");
 
