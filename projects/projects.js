@@ -371,61 +371,55 @@ function renderLegend(data, colors) {
     console.log("✅ Legend successfully updated!");
 }
 
-async function fetchProjectData() {
-    try {
-        console.log("Fetching project data...");
-        projects = await fetchJSON('../lib/projects.json'); // ✅ Assign to global variable
-        console.log("Fetched projects:", projects);
+//async function fetchProjectData() {
+    //try {
+        //console.log("Fetching project data...");
+        //projects = await fetchJSON('../lib/projects.json'); // ✅ Assign to global variable
+        //console.log("Fetched projects:", projects);
 
-        let rolledData = d3.rollups(
-            projects,
-            v => v.length,  
-            d => d.year
-        );
+        //let rolledData = d3.rollups(
+           // projects,
+            //v => v.length,  
+            //d => d.year
+       // );
 
-        let data = rolledData.map(([year, count]) => ({
-            value: count,
-            label: year
-        }));
+        //let data = rolledData.map(([year, count]) => ({
+         //   value: count,
+        //   label: year
+        //}));
 
-        if (typeof renderPieChart === "function") {
-            console.log("🔵 Calling renderPieChart...");
-            renderPieChart(data);
-        } else {
-            console.error("Error: renderPieChart function is not defined!");
-        }
+        //if (typeof renderPieChart === "function") {
+        //    console.log("🔵 Calling renderPieChart...");
+        //    renderPieChart(data);
+        //} else {
+         //   console.error("Error: renderPieChart function is not defined!");
+        //}
 
-    } catch (error) {
-        console.error("Error fetching project data:", error);
-    }
-}
-
-
+    //} catch (error) {
+    //    console.error("Error fetching project data:", error);
+    //}
+//}
 
 
-fetchProjectData();
+
+
+//fetchProjectData();
 
 console.log("Pie chart successfully rendered!");
 
 async function init() {
     try {
         console.log("Calling fetchJSON...");
-        projects = await fetchJSON('../lib/projects.json');  // ✅ Assign to global variable
+        projects = await fetchJSON('../lib/projects.json');
         console.log("Fetched projects:", projects);
 
         const projectsContainer = document.querySelector('.projects');
         const projectsTitle = document.querySelector('.projects-title');
 
-        projectsContainer.innerHTML = '';
-
+        // Update the title
         if (projectsTitle) {
             projectsTitle.textContent = `${projects.length} Projects`;
         }
-
-        // Use the proper renderProjects function to display projects
-        console.log("About to render projects...");
-        renderProjects(projects, projectsContainer, 'h2');
-        console.log("After rendering projects, container innerHTML:", projectsContainer.innerHTML);
 
         // Generate pie chart data
         let rolledData = d3.rollups(
@@ -454,10 +448,16 @@ async function init() {
         // Initialize pie chart with click behavior
         embedArcClick(arcs, projects, data);
 
+        // Render all projects initially
+        console.log("About to render projects...");
+        renderProjects(projects, projectsContainer, 'h2');
+        console.log("After rendering projects, container innerHTML:", projectsContainer.innerHTML);
+
     } catch (error) {
         console.error('Error in init():', error);
     }
 }
+
 
 init();
 
