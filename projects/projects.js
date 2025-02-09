@@ -101,7 +101,7 @@ async function renderPieChart(data) {
             // Toggle selection
             if (selectedYear === d.data.label) {
                 selectedYear = null;
-                // Reset all wedges to original colors
+                // Reset all wedges and legend items to original colors
                 paths.attr("fill", (d, i) => colors(i));
                 renderProjects(projects, document.querySelector('.projects'), 'h2');
                 updateLegendColors(data, colors, null); // Reset legend colors
@@ -144,7 +144,7 @@ function updateLegendColors(data, colors, selectedYear) {
             const li = d3.select(this);
             const year = data[i].label;
             const color = selectedYear === null ? colors(i) : 
-                         year === selectedYear ? colors(i) : "#808080";
+                         year === selectedYear ? "#FFD700" : "#808080"; // Use gold for selected year
             
             li.select(".swatch")
                 .style("background", color);
