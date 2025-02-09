@@ -92,69 +92,149 @@ const svg = d3.select("#pieChart")
     .style("top", "50px")       // Adjust these values as needed
     .style("left", "50px");     // Adjust these values as needed
 
-function setQuery(newQuery) {
-    if (!projects || projects.length === 0) {
-        console.warn("🚨 Projects data is not available yet.");
-        return;
-    }
-
-    query = newQuery.toLowerCase();
+    function setQuery(newQuery) {
+        if (!projects || projects.length === 0) {
+            console.warn("🚨 Projects data is not available yet.");
+            return;
+        }
     
-    // Filter projects based on title
-    let filteredProjects = projects.filter(project => 
-        project.title.toLowerCase().includes(query)
-    );
-
-    const projectsContainer = document.querySelector('.projects');
-
-    if (filteredProjects.length > 0) {
-        // Update projects display
-        renderProjects(filteredProjects, projectsContainer, 'h2');
+        query = newQuery.toLowerCase();
+        const projectsContainer = document.querySelector('.projects');
         
-        // Update projects count
-        const projectsTitle = document.querySelector('.projects-title');
-        if (projectsTitle) {
-            projectsTitle.textContent = `${filteredProjects.length} Projects`;
-        }
-        
-        // Recalculate data for pie chart
-        let newRolledData = d3.rollups(
-            filteredProjects,
-            v => v.length,
-            d => d.year
+        // Filter projects based on search query
+        let filteredProjects = projects.filter(project => 
+            project.title.toLowerCase().includes(query)
         );
-
-        let newData = newRolledData.map(([year, count]) => ({
-            label: year,
-            value: count
-        }));
-
-        // Generate new arcs
-        let pie = d3.pie()
-            .value(d => d.value);
-        
-        let arc = d3.arc()
-            .innerRadius(0)
-            .outerRadius(100);
-
-        let newArcData = pie(newData);
-        let newArcs = newArcData.map(d => arc(d));
-
-        // Reset selected index and update visualization
-        selectedIndex = -1;
-        updateVisualization(newArcs, filteredProjects, newData);
-    } else {
-        projectsContainer.innerHTML = "<p>No matching projects found.</p>";
-        const projectsTitle = document.querySelector('.projects-title');
-        if (projectsTitle) {
-            projectsTitle.textContent = "0 Projects";
+    
+        // Update projects display
+        if (filteredProjects.length > 0) {
+            // Update projects title
+            const projectsTitle = document.querySelector('.projects-title');
+            if (projectsTitle) {
+                projectsTitle.textContent = `${filteredProjects.length} Projects`;
+            }
+    
+            // Calculate pie chart data from filtered projects
+            let newRolledData = d3.rollups(
+                filteredProjects,
+                v => v.length,
+                d => d.year
+            );
+    
+            let newData = newRolledData.map(([year, count]) => ({
+                label: year,
+                value: count
+            }));
+    
+            // Generate new arcs
+            let pie = d3.pie().value(d => d.value);
+            let arc = d3.arc().innerRadius(0).outerRadius(100);
+            let newArcData = pie(newData);
+            let newArcs = newArcData.map(d => arc(d));
+    
+            // Reset selection state
+            selectedIndex = -1;
+    
+            // Update the pie chart
+            updateVisualization(newArcs, filteredProjects, newData);
+    
+            // Display filtered projects
+            renderProjects(filteredProjects, projectsContainer, 'h2');
+        } else {
+            // Handle no results
+            projectsContainer.innerHTML = "<p>No matching projects found.</p>";
+            const projectsTitle = document.querySelector('.projects-title');
+            if (projectsTitle) {
+                projectsTitle.textContent = "0 Projects";
+            }
+            
+            // Clear pie chart
+            d3.select("#pieChart").selectAll("*").remove();
+            d3.select(".legend").html("");
         }
-        
-        // Clear pie chart if no results
-        svg.selectAll("*").remove();
-        d3.select(".legend").html("");
     }
+    
+
+
+    function updateVisualization(arcs, projectsData, data) {
+        const svg = d3.select("#pieChart")
+            .attr("width", 400)
+            .attr("height", 400);
+        
+        // Clear existing content
+        svg.selectAll("*").remove();
+        
+        // Create centered group
+        const g = svg.append("g")
+            .attr("transform", `translate(${400/2},${400/2})`);
+    
+        // Add paths
+        arcs.forEach((arc, i) => {
+            g.append("path")
+                .attr("d", arc)
+                .attr("fill", colors(i))
+                .attr("stroke", "white")
+                .attr("stroke-width", "2px")
+                .on("click", () => {
+                    const projectsContainer = document.querySelector('.projects');
+                    selectedIndex = selectedIndex === i ? -1 : i;
+                    
+                    // Update wedge colors
+                    g.selectAll("path")
+                        .attr("fill", (_, idx) => 
+                            idx === selectedIndex ? "#FFD700" : colors(idx)
+                        );
+    
+                    // Update legend
+                    updateLegend(data, selectedIndex);
+    
+                    // Filter and update projects based on both search and year selection
+                    if (selectedIndex !== -1) {
+                        const selectedYear = data[selectedIndex].label;
+                        // Apply both search filter and year filter
+                        const yearFilteredProjects = projectsData.filter(p => p.year === selectedYear);
+                        renderProjects(yearFilteredProjects, projectsContainer, 'h2');
+                        
+                        // Update project count
+                        const projectsTitle = document.querySelector('.projects-title');
+                        if (projectsTitle) {
+                            projectsTitle.textContent = `${yearFilteredProjects.length} Projects`;
+                        }
+                    } else {
+                        // If no year selected, show all projects that match search
+                        renderProjects(projectsData, projectsContainer, 'h2');
+                        
+                        // Update project count
+                        const projectsTitle = document.querySelector('.projects-title');
+                        if (projectsTitle) {
+                            projectsTitle.textContent = `${projectsData.length} Projects`;
+                        }
+                    }
+                });
+        });
+    
+        // Update legend
+        updateLegend(data);
+    }
+
+function updateLegend(data, selectedIdx = -1) {
+    const legendContainer = d3.select(".legend");
+    legendContainer.html("");
+
+    data.forEach((d, i) => {
+        const color = i === selectedIdx ? "#FFD700" : colors(i);
+        const li = legendContainer.append("li")
+            .attr("style", `--color: ${color}`);
+        
+        li.append("span")
+            .attr("class", "swatch")
+            .style("background", color);
+        
+        li.append("span")
+            .html(`${d.label} <em>(${d.value})</em>`);
+    });
 }
+
 
 function updatePieChart(selectedYear) {
     console.log(`🔄 Updating Pie Chart for Selected Year: ${selectedYear}`);
@@ -168,7 +248,7 @@ function updatePieChart(selectedYear) {
 }
 
 
-let searchInput = document.getElementsByClassName('searchBar')[0];
+let searchInput = document.querySelector('.searchBar');
 searchInput.addEventListener('input', (event) => {
     if (projects.length > 0) {
         setQuery(event.target.value);
@@ -176,6 +256,7 @@ searchInput.addEventListener('input', (event) => {
         console.warn("🚨 Search attempted before projects loaded.");
     }
 });
+
 
 
 
@@ -327,26 +408,33 @@ fetchProjectData();
 console.log("Pie chart successfully rendered!");
 
 async function init() {
-    try {
-        console.log("Calling fetchJSON...");
-        projects = await fetchJSON('../lib/projects.json');  // ✅ Assign to global variable
-        console.log("Fetched projects:", projects);
+  try {
+    console.log("Calling fetchJSON...");
+    const projects = await fetchJSON('../lib/projects.json');
+    console.log("Fetched projects:", projects);
 
-        const projectsContainer = document.querySelector('.projects');
-        const projectsTitle = document.querySelector('.projects-title');
+    // Select the container that holds your projects.
+    const projectsContainer = document.querySelector('.projects');
+    const projectsTitle = document.querySelector('.projects-title');
 
-        projectsContainer.innerHTML = '';
+    // Clear the container so only dynamic projects from JSON are shown.
+    projectsContainer.innerHTML = '';
 
-        if (projectsTitle) {
-            projectsTitle.textContent = `${projects.length} Projects`;
-        }
-
-        console.log("About to render projects...");
-        renderProjects(projects, projectsContainer, 'h2');
-        console.log("After rendering projects, container innerHTML:", projectsContainer.innerHTML);
-    } catch (error) {
-        console.error('Error in init():', error);
+    // Update the heading text with the project count.
+    if (projectsTitle && projects) {
+      projectsTitle.textContent = `${projects.length} Projects`;
     }
+
+    // Render the projects dynamically.
+    projects.forEach(project => {
+      const projectElement = document.createElement('div');
+      projectElement.classList.add('project');
+      projectElement.textContent = project.name; // Assuming each project has a 'name' property
+      projectsContainer.appendChild(projectElement);
+    });
+  } catch (error) {
+    console.error("Error fetching projects:", error);
+  }
 }
 
 init();
@@ -398,3 +486,18 @@ function renderProjects(filteredProjects, container, headingLevel = 'h2') {
 
     console.log("✅ Finished Rendering Projects");
 }
+
+// Create an arc generator with an inner radius of 0 and an outer radius of 50.
+const arcGenerator = d3.arc().innerRadius(0).outerRadius(50);
+
+// Generate a full circle (arc path) by specifying the start and end angles in radians.
+const arc = arcGenerator({
+  startAngle: 0,
+  endAngle: 2 * Math.PI,
+});
+
+// Append the arc as a new path element to the existing <svg> element.
+d3.select('svg')
+  .append('path')
+  .attr('d', arc)
+  .attr('fill', 'red');
