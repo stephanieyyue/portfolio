@@ -12,11 +12,20 @@ let colors = d3.scaleOrdinal(d3.schemeTableau10);
 
 function embedArcClick(arcsGiven, projectsGiven, dataGiven) {
     const svgNS = "http://www.w3.org/2000/svg";
-    const svg = d3.select("#pieChart");
-    const projectsContainer = document.querySelector('.projects');
     
-    // Clear existing paths and legend
-    svg.selectAll("path").remove();
+    // Get or create the SVG element with fixed dimensions and position
+    let svg = d3.select("#pieChart")
+        .attr("width", 400)
+        .attr("height", 400);
+    
+    // Clear existing content
+    svg.html("");
+    
+    // Create a group element for the pie chart with fixed transform
+    let g = svg.append("g")
+        .attr("transform", "translate(200, 200)");  // Center of the SVG
+    
+    // Clear legend
     d3.select(".legend").html("");
 
     arcsGiven.forEach((arc, i) => {
@@ -30,7 +39,7 @@ function embedArcClick(arcsGiven, projectsGiven, dataGiven) {
             selectedIndex = selectedIndex === i ? -1 : i;
             
             // Update all paths
-            svg.selectAll("path").each(function(d, idx) {
+            g.selectAll("path").each(function(d, idx) {
                 const pathElement = d3.select(this);
                 if (selectedIndex === idx) {
                     pathElement.attr("fill", "#FFD700");
@@ -61,7 +70,7 @@ function embedArcClick(arcsGiven, projectsGiven, dataGiven) {
             }
         });
 
-        svg.node().appendChild(path);
+        g.node().appendChild(path);  // Append to the group instead of directly to SVG
 
         // Create legend item
         const legendContainer = d3.select(".legend");
@@ -85,11 +94,19 @@ function setQuery(newQuery) {
     }
 
     query = newQuery.toLowerCase();
+    
+    // Filter projects based on title
     let filteredProjects = projects.filter(project => 
         project.title.toLowerCase().includes(query)
     );
 
+    const projectsContainer = document.querySelector('.projects');
+    projectsContainer.innerHTML = '';
+
     if (filteredProjects.length > 0) {
+        // Update projects display
+        renderProjects(filteredProjects, projectsContainer, 'h2');
+        
         // Recalculate data for pie chart
         let newRolledData = d3.rollups(
             filteredProjects,
@@ -113,8 +130,22 @@ function setQuery(newQuery) {
         let newArcData = pie(newData);
         let newArcs = newArcData.map(d => arc(d));
 
+        // Reset selected index since we're generating a new chart
+        selectedIndex = -1;
+
         // Clear existing and create new visualization
         embedArcClick(newArcs, filteredProjects, newData);
+    } else {
+        projectsContainer.innerHTML = "<p>No matching projects found.</p>";
+        // Clear pie chart if no results
+        d3.select("#pieChart").selectAll("path").remove();
+        d3.select(".legend").html("");
+    }
+
+    // Update projects title count if it exists
+    const projectsTitle = document.querySelector('.projects-title');
+    if (projectsTitle) {
+        projectsTitle.textContent = `${filteredProjects.length} Projects`;
     }
 
     return filteredProjects;
@@ -130,9 +161,6 @@ function updatePieChart(selectedYear) {
 
     renderPieChart(filteredData);
 }
-
-
-
 
 
 let searchInput = document.getElementsByClassName('searchBar')[0];
