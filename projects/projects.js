@@ -85,8 +85,13 @@ function embedArcClick(arcsGiven, projectsGiven, dataGiven) {
             .html(`${dataGiven[i].label} <em>(${dataGiven[i].value})</em>`);
     });
 }
+const svg = d3.select("#pieChart")
+    .attr("width", 400)
+    .attr("height", 400)
+    .style("position", "fixed")  // Keep the chart in place
+    .style("top", "50px")       // Adjust these values as needed
+    .style("left", "50px");     // Adjust these values as needed
 
-// Function to update query and filter projects
 function setQuery(newQuery) {
     if (!projects || projects.length === 0) {
         console.warn("🚨 Projects data is not available yet.");
@@ -101,11 +106,16 @@ function setQuery(newQuery) {
     );
 
     const projectsContainer = document.querySelector('.projects');
-    projectsContainer.innerHTML = '';
 
     if (filteredProjects.length > 0) {
         // Update projects display
         renderProjects(filteredProjects, projectsContainer, 'h2');
+        
+        // Update projects count
+        const projectsTitle = document.querySelector('.projects-title');
+        if (projectsTitle) {
+            projectsTitle.textContent = `${filteredProjects.length} Projects`;
+        }
         
         // Recalculate data for pie chart
         let newRolledData = d3.rollups(
@@ -130,25 +140,20 @@ function setQuery(newQuery) {
         let newArcData = pie(newData);
         let newArcs = newArcData.map(d => arc(d));
 
-        // Reset selected index since we're generating a new chart
+        // Reset selected index and update visualization
         selectedIndex = -1;
-
-        // Clear existing and create new visualization
-        embedArcClick(newArcs, filteredProjects, newData);
+        updateVisualization(newArcs, filteredProjects, newData);
     } else {
         projectsContainer.innerHTML = "<p>No matching projects found.</p>";
+        const projectsTitle = document.querySelector('.projects-title');
+        if (projectsTitle) {
+            projectsTitle.textContent = "0 Projects";
+        }
+        
         // Clear pie chart if no results
-        d3.select("#pieChart").selectAll("path").remove();
+        svg.selectAll("*").remove();
         d3.select(".legend").html("");
     }
-
-    // Update projects title count if it exists
-    const projectsTitle = document.querySelector('.projects-title');
-    if (projectsTitle) {
-        projectsTitle.textContent = `${filteredProjects.length} Projects`;
-    }
-
-    return filteredProjects;
 }
 
 function updatePieChart(selectedYear) {
