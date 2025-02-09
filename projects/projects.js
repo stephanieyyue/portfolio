@@ -104,17 +104,17 @@ async function renderPieChart(data) {
                 // Reset all wedges and legend items to original colors
                 paths.attr("fill", (d, i) => colors(i));
                 renderProjects(projects, document.querySelector('.projects'), 'h2');
-                updateLegendColors(data, colors, null); // Reset legend colors
+                updateLegendColors(data, colors, null);
             } else {
                 selectedYear = d.data.label;
                 
-                // Update wedge colors
-                paths.attr("fill", (d) => {
-                    return d.data.label === selectedYear ? "#FFD700" : "#808080";
-                });
+                // Update wedge colors - keep original colors except for selected
+                paths.attr("fill", (d, i) => 
+                    d.data.label === selectedYear ? "#FFD700" : colors(i)
+                );
                 
                 filterAndRenderProjects(selectedYear);
-                updateLegendColors(data, colors, selectedYear); // Update legend with selected year
+                updateLegendColors(data, colors, selectedYear);
             }
         });
 
@@ -123,6 +123,7 @@ async function renderPieChart(data) {
     // Initial legend render
     renderLegend(data, colors);
 }
+
 
 
 
@@ -143,8 +144,9 @@ function updateLegendColors(data, colors, selectedYear) {
         .each(function(d, i) {
             const li = d3.select(this);
             const year = data[i].label;
+            // Keep original colors except for selected year
             const color = selectedYear === null ? colors(i) : 
-                         year === selectedYear ? "#FFD700" : "#808080"; // Use gold for selected year
+                         year === selectedYear ? "#FFD700" : colors(i);
             
             li.select(".swatch")
                 .style("background", color);
