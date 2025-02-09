@@ -408,33 +408,55 @@ fetchProjectData();
 console.log("Pie chart successfully rendered!");
 
 async function init() {
-  try {
-    console.log("Calling fetchJSON...");
-    const projects = await fetchJSON('../lib/projects.json');
-    console.log("Fetched projects:", projects);
+    try {
+        console.log("Calling fetchJSON...");
+        projects = await fetchJSON('../lib/projects.json');  // ✅ Assign to global variable
+        console.log("Fetched projects:", projects);
 
-    // Select the container that holds your projects.
-    const projectsContainer = document.querySelector('.projects');
-    const projectsTitle = document.querySelector('.projects-title');
+        const projectsContainer = document.querySelector('.projects');
+        const projectsTitle = document.querySelector('.projects-title');
 
-    // Clear the container so only dynamic projects from JSON are shown.
-    projectsContainer.innerHTML = '';
+        projectsContainer.innerHTML = '';
 
-    // Update the heading text with the project count.
-    if (projectsTitle && projects) {
-      projectsTitle.textContent = `${projects.length} Projects`;
+        if (projectsTitle) {
+            projectsTitle.textContent = `${projects.length} Projects`;
+        }
+
+        // Use the proper renderProjects function to display projects
+        console.log("About to render projects...");
+        renderProjects(projects, projectsContainer, 'h2');
+        console.log("After rendering projects, container innerHTML:", projectsContainer.innerHTML);
+
+        // Generate pie chart data
+        let rolledData = d3.rollups(
+            projects,
+            v => v.length,
+            d => d.year
+        );
+
+        let data = rolledData.map(([year, count]) => ({
+            label: year,
+            value: count
+        }));
+
+        // Create pie chart generators
+        let pie = d3.pie()
+            .value(d => d.value);
+        
+        let arc = d3.arc()
+            .innerRadius(0)
+            .outerRadius(100);
+
+        // Generate arc data
+        let arcData = pie(data);
+        let arcs = arcData.map(d => arc(d));
+
+        // Initialize pie chart with click behavior
+        embedArcClick(arcs, projects, data);
+
+    } catch (error) {
+        console.error('Error in init():', error);
     }
-
-    // Render the projects dynamically.
-    projects.forEach(project => {
-      const projectElement = document.createElement('div');
-      projectElement.classList.add('project');
-      projectElement.textContent = project.name; // Assuming each project has a 'name' property
-      projectsContainer.appendChild(projectElement);
-    });
-  } catch (error) {
-    console.error("Error fetching projects:", error);
-  }
 }
 
 init();
