@@ -53,7 +53,7 @@ function displayStats() {
 
 
 async function loadData() {
-    data = await d3.csv('./loc.csv', (row) => ({
+    data = await d3.csv('meta/loc.csv', (row) => ({
       ...row,
       line: Number(row.line),
       depth: Number(row.depth),
