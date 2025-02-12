@@ -23,33 +23,34 @@ function processCommits() {
 }
 
 function displayStats() {
-    console.log("Checking if #stats exists:", document.getElementById("stats")); // Debug
+    console.log("Checking if #stats exists:", document.getElementById("stats")); 
     if (!document.getElementById("stats")) {
         console.error("Error: #stats div not found in the DOM.");
         return;
     }
-    const dl = d3.select('#stats').append('dl').attr('class', 'stats');
 
-    // Total Lines of Code
-    dl.append('dt').html('Total <abbr title="Lines of Code">LOC</abbr>:');
-    dl.append('dd').text(data.length);
+    const statsContainer = d3.select('#stats')
+        .append('div')
+        .attr('class', 'stats-container');
 
-    // Total Commits
-    dl.append('dt').text('Total Commits:');
-    dl.append('dd').text(commits.length);
+    const stats = [
+        { label: 'Commits', value: commits.length },
+        { label: 'Files', value: new Set(data.map(d => d.file)).size }, // Unique file count
+        { label: 'Total LOC', value: data.length },
+        { label: 'Max Depth', value: d3.max(data, d => d.depth) || "N/A" },
+        { label: 'Longest Line', value: d3.max(data, d => d.length) || "N/A" },
+        { label: 'Max Lines', value: d3.max(commits, d => d.totalLines) || "No commits found" }
+    ];
 
-    // Max Depth
-    dl.append('dt').text('Max Depth:');
-    dl.append('dd').text(d3.max(data, d => d.depth));
+    stats.forEach(stat => {
+        let statBox = statsContainer.append('div').attr('class', 'stat-box');
+        statBox.append('dt').text(stat.label);
+        statBox.append('dd').text(stat.value);
+    });
 
-    // Longest Line
-    dl.append('dt').text('Longest Line:');
-    dl.append('dd').text(d3.max(data, d => d.length));
-
-    // Max Lines in a Commit
-    dl.append('dt').text('Max Lines in a Commit:');
-    dl.append('dd').text(d3.max(commits, d => d.totalLines));
+    console.log("Stats added to the page");
 }
+
 
 async function loadData() {
     data = await d3.csv('./meta/loc.csv', (row) => ({
