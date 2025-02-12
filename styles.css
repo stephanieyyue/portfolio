@@ -391,3 +391,17 @@ svg:has(path:hover) path:not(:hover) {
 path {
   transition: opacity 300ms ease-in-out;
 }
+
+.stats {
+  font-family: Arial, sans-serif;
+  max-width: 500px;
+}
+
+dt {
+  font-weight: bold;
+  margin-top: 10px;
+}
+
+dd {
+  margin-left: 20px;
+}
