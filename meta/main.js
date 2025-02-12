@@ -23,6 +23,11 @@ function processCommits() {
 }
 
 function displayStats() {
+    console.log("Checking if #stats exists:", document.getElementById("stats")); // Debug
+    if (!document.getElementById("stats")) {
+        console.error("Error: #stats div not found in the DOM.");
+        return;
+    }
     const dl = d3.select('#stats').append('dl').attr('class', 'stats');
 
     // Total Lines of Code
@@ -47,7 +52,7 @@ function displayStats() {
 }
 
 async function loadData() {
-    data = await d3.csv('loc.csv', (row) => ({
+    data = await d3.csv('./meta/loc.csv', (row) => ({
       ...row,
       line: Number(row.line),
       depth: Number(row.depth),
@@ -55,8 +60,8 @@ async function loadData() {
       date: new Date(row.date + 'T00:00' + row.timezone),
       datetime: new Date(row.datetime),
     }));
-
     console.log("Raw Data:", data);
+    console.log("Checking first row of data:", data[0]); // Ensure we have data
     processCommits();
     displayStats();  // Call display function
     console.log("Processed Commits:", commits);
