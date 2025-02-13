@@ -425,3 +425,35 @@ path {
   margin: 5px 0 0;
   color: #000; /* Black text */
 }
+
+.gridlines line {
+  stroke: #ddd;  /* Light gray color for grid lines */
+  stroke-opacity: 0.7;  /* Make them slightly transparent */
+  shape-rendering: crispEdges;
+}
+
+.gridlines path {
+  display: none;  /* Hide axis line */
+}
+
+.tooltip {
+  position: fixed;
+  top: 1em;
+  left: 1em;
+  background: rgba(0, 0, 0, 0.75);
+  color: white;
+  padding: 10px;
+  border-radius: 5px;
+  font-size: 14px;
+  display: none; /* Hide tooltip initially */
+}
+
+circle {
+  transition: 200ms;
+  transform-origin: center;
+  transform-box: fill-box;
+}
+
+circle:hover {
+  transform: scale(1.5);
+}

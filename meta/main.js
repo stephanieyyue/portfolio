@@ -14,28 +14,31 @@ const svg = d3.select("#chart")
     .attr("transform", `translate(${margin.left}, ${margin.top})`);
 
 const xScale = d3.scaleTime().range([0, usableWidth]);
-const yScale = d3.scaleLinear().domain([0, 24]).range([usableHeight, 0]);
+const yScale = d3.scaleTime().range([usableHeight, 0]);
 
 function processCommits() {
     commits = d3.groups(data, d => d.commit)
         .map(([commit, lines]) => {
             let first = lines[0];
 
+            // Extract hour and minute from the commit time
+            let [hours, minutes] = first.time.split(':').map(Number);
+
             return {
                 id: commit,
                 url: `https://github.com/stephanieyyue/portfolio/commit/${commit}`,
                 author: first.author,
                 date: first.date,
-                time: first.time,
                 timezone: first.timezone,
-                datetime: first.datetime,
-                hourFrac: (parseInt(first.time.split(':')[0]) + parseInt(first.time.split(':')[1]) / 60),
+                datetime: new Date(first.datetime), // Keep full datetime for X-axis
+                time: new Date(2023, 0, 1, hours, minutes), // Convert hour+minute to Date object for Y-axis
                 totalLines: lines.length,
             };
         });
 
     console.log("Grouped Commits:", commits);
 }
+
 
 function displayStats() {
     console.log("Checking if #stats exists:", document.getElementById("stats")); 
@@ -68,32 +71,66 @@ function displayStats() {
 
 // Function to create the scatter plot
 function createScatterPlot() {
-    // Update scales with domain values from the data
-    xScale.domain(d3.extent(commits, d => d.datetime));
-    yScale.domain([0, 24]); // Ensuring the Y-axis represents time of day
+    if (commits.length === 0) {
+        console.error("No commits to display.");
+        return;
+    }
 
-    // Append circles for each commit
+    // ✅ FIX: Set Y-axis scale before using it
+    yScale.domain([new Date(2023, 0, 1, 0, 0), new Date(2023, 0, 1, 23, 59)]); // 24-hour format
+    xScale.domain(d3.extent(commits, d => d.datetime));
+
+    // ✅ Add grid lines BEFORE axes
+    const gridlines = svg.append("g")
+        .attr("class", "gridlines")
+        .attr("transform", `translate(0, 0)`);
+
+    gridlines.call(d3.axisLeft(yScale)
+        .tickFormat("")  // Remove text labels
+        .tickSize(-usableWidth)); // Full-width grid lines
+
+    // ✅ Append circles for each commit
     svg.selectAll("circle")
         .data(commits)
         .enter()
         .append("circle")
-        .attr("cx", d => xScale(d.datetime))
-        .attr("cy", d => yScale(d.hourFrac))
+        .attr("cx", d => xScale(d.datetime)) 
+        .attr("cy", d => yScale(d.time)) 
         .attr("r", 5)
-        .attr("fill", "steelblue");
+        .attr("fill", "steelblue")
+        .on("mouseenter", (event, commit) => updateTooltipContent(commit, event))
+        .on("mouseleave", () => updateTooltipContent(null)); // Clear tooltip on exit
 
     // Add X-axis
     svg.append("g")
-        .attr("transform", `translate(0, ${usableHeight})`) // Move to bottom
-        .call(d3.axisBottom(xScale).tickFormat(d3.timeFormat("%b %d")));  // Format date labels
+        .attr("transform", `translate(0, ${usableHeight})`)
+        .call(d3.axisBottom(xScale).tickFormat(d3.timeFormat("%b %d")));
 
     // Add Y-axis
-    svg.append("g")
-        .call(d3.axisLeft(yScale).ticks(6)); // Displaying time in 6 intervals
+    svg.append("g").call(d3.axisLeft(yScale).tickFormat(d3.timeFormat("%H:%M")));
 
-    console.log("Scatter plot added.");
+    console.log("Scatter plot with tooltips added.");
 }
 
+function updateTooltipContent(commit, event) {
+    const tooltip = document.getElementById('commit-tooltip');
+    const link = document.getElementById('commit-link');
+    const date = document.getElementById('commit-date');
+
+    if (!commit || Object.keys(commit).length === 0) {
+        tooltip.style.display = "none"; // Hide tooltip when leaving a dot
+        return;
+    }
+
+    link.href = commit.url;
+    link.textContent = commit.id;
+    date.textContent = commit.datetime.toLocaleString('en', { dateStyle: 'full' });
+
+    // Position tooltip near the mouse pointer
+    tooltip.style.left = (event.pageX + 10) + "px";
+    tooltip.style.top = (event.pageY + 10) + "px";
+    tooltip.style.display = "block";
+}
 
 async function loadData() {
     data = await d3.csv('../meta/loc.csv', (row) => ({
