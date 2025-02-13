@@ -1,5 +1,8 @@
 let data = [];
 let commits = [];
+const width = 1000;
+const height = 600;
+
 
 function processCommits() {
     commits = d3.groups(data, d => d.commit)
@@ -51,6 +54,33 @@ function displayStats() {
     console.log("Stats added to the page");
 }
 
+function createScatterPlot() {
+    const svg = d3.select("#chart")
+        .append("svg")
+        .attr("width", width)
+        .attr("height", height)
+        .style("overflow", "visible");
+
+    const xScale = d3.scaleTime()
+        .domain(d3.extent(commits, d => d.datetime))
+        .range([0, width])
+        .nice();
+
+    const yScale = d3.scaleLinear()
+        .domain([0, 24])
+        .range([height, 0]);
+
+    const dots = svg.append('g').attr('class', 'dots');
+
+    dots.selectAll("circle")
+        .data(commits)
+        .join("circle")
+        .attr("cx", d => xScale(d.datetime))
+        .attr("cy", d => yScale(d.hourFrac))
+        .attr("r", 5)
+        .attr("fill", "steelblue");
+}
+
 
 async function loadData() {
     data = await d3.csv('../meta/loc.csv', (row) => ({
@@ -64,7 +94,8 @@ async function loadData() {
     console.log("Raw Data:", data);
     console.log("Checking first row of data:", data[0]); // Ensure we have data
     processCommits();
-    displayStats();  // Call display function
+    displayStats(); 
+    createScatterPlot();
     console.log("Processed Commits:", commits);
 }
 
