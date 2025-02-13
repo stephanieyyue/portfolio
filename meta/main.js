@@ -2,7 +2,19 @@ let data = [];
 let commits = [];
 const width = 1000;
 const height = 600;
+const margin = { top: 20, right: 30, bottom: 50, left: 50 };  // Adjusted for axes
+const usableWidth = width - margin.left - margin.right;
+const usableHeight = height - margin.top - margin.bottom;
 
+const svg = d3.select("#chart")
+    .append("svg")
+    .attr("width", width)
+    .attr("height", height)
+    .append("g")
+    .attr("transform", `translate(${margin.left}, ${margin.top})`);
+
+const xScale = d3.scaleTime().range([0, usableWidth]);
+const yScale = d3.scaleLinear().domain([0, 24]).range([usableHeight, 0]);
 
 function processCommits() {
     commits = d3.groups(data, d => d.commit)
@@ -54,31 +66,32 @@ function displayStats() {
     console.log("Stats added to the page");
 }
 
+// Function to create the scatter plot
 function createScatterPlot() {
-    const svg = d3.select("#chart")
-        .append("svg")
-        .attr("width", width)
-        .attr("height", height)
-        .style("overflow", "visible");
+    // Update scales with domain values from the data
+    xScale.domain(d3.extent(commits, d => d.datetime));
+    yScale.domain([0, 24]); // Ensuring the Y-axis represents time of day
 
-    const xScale = d3.scaleTime()
-        .domain(d3.extent(commits, d => d.datetime))
-        .range([0, width])
-        .nice();
-
-    const yScale = d3.scaleLinear()
-        .domain([0, 24])
-        .range([height, 0]);
-
-    const dots = svg.append('g').attr('class', 'dots');
-
-    dots.selectAll("circle")
+    // Append circles for each commit
+    svg.selectAll("circle")
         .data(commits)
-        .join("circle")
+        .enter()
+        .append("circle")
         .attr("cx", d => xScale(d.datetime))
         .attr("cy", d => yScale(d.hourFrac))
         .attr("r", 5)
         .attr("fill", "steelblue");
+
+    // Add X-axis
+    svg.append("g")
+        .attr("transform", `translate(0, ${usableHeight})`) // Move to bottom
+        .call(d3.axisBottom(xScale).tickFormat(d3.timeFormat("%b %d")));  // Format date labels
+
+    // Add Y-axis
+    svg.append("g")
+        .call(d3.axisLeft(yScale).ticks(6)); // Displaying time in 6 intervals
+
+    console.log("Scatter plot added.");
 }
 
 
@@ -88,7 +101,7 @@ async function loadData() {
       line: Number(row.line),
       depth: Number(row.depth),
       length: Number(row.length),
-      date: new Date(row.date + 'T00:00' + row.timezone),
+      date: new Date(row.date + 'T00:00:00' + row.timezone),
       datetime: new Date(row.datetime),
     }));
     console.log("Raw Data:", data);
