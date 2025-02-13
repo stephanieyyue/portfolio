@@ -76,9 +76,17 @@ function createScatterPlot() {
         return;
     }
 
-    // ✅ FIX: Set Y-axis scale before using it
-    yScale.domain([new Date(2023, 0, 1, 0, 0), new Date(2023, 0, 1, 23, 59)]); // 24-hour format
+    // ✅ Fix Y-axis scale as time scale
+    yScale.domain([new Date(2023, 0, 1, 0, 0), new Date(2023, 0, 1, 23, 59)]); // Full 24-hour scale
     xScale.domain(d3.extent(commits, d => d.datetime));
+
+    // ✅ Calculate the range of total lines edited
+    const [minLines, maxLines] = d3.extent(commits, d => d.totalLines);
+
+    // ✅ Define a radius scale based on total lines edited
+    const rScale = d3.scaleLinear()
+        .domain([minLines, maxLines])
+        .range([2, 30]);  // Experiment with min/max sizes
 
     // ✅ Add grid lines BEFORE axes
     const gridlines = svg.append("g")
@@ -89,36 +97,49 @@ function createScatterPlot() {
         .tickFormat("")  // Remove text labels
         .tickSize(-usableWidth)); // Full-width grid lines
 
-    // ✅ Append circles for each commit
+    // ✅ Append circles for each commit, using rScale for radius
     svg.selectAll("circle")
         .data(commits)
         .enter()
         .append("circle")
-        .attr("cx", d => xScale(d.datetime)) 
-        .attr("cy", d => yScale(d.time)) 
-        .attr("r", 5)
+        .attr("cx", d => xScale(d.datetime))
+        .attr("cy", d => yScale(d.time))
+        .attr("r", d => rScale(d.totalLines))  // ✅ Scale dot size based on lines edited
         .attr("fill", "steelblue")
-        .on("mouseenter", (event, commit) => updateTooltipContent(commit, event))
-        .on("mouseleave", () => updateTooltipContent(null)); // Clear tooltip on exit
+        .style("fill-opacity", 0.7) // Make overlapping dots visible
+        .on("mouseenter", (event, commit) => {
+            updateTooltipContent(commit, event);
+            updateTooltipVisibility(true);
+            updateTooltipPosition(event);
+            d3.select(event.currentTarget).style("fill-opacity", 1); // Highlight hovered dot
+        })
+        .on("mousemove", (event) => updateTooltipPosition(event)) // Track mouse movement
+        .on("mouseleave", (event) => {
+            updateTooltipContent(null, null);
+            updateTooltipVisibility(false);
+            d3.select(event.currentTarget).style("fill-opacity", 0.7); // Restore opacity
+        });
 
-    // Add X-axis
+    // ✅ Add X-axis
     svg.append("g")
         .attr("transform", `translate(0, ${usableHeight})`)
         .call(d3.axisBottom(xScale).tickFormat(d3.timeFormat("%b %d")));
 
-    // Add Y-axis
+    // ✅ Add Y-axis with proper Time format
     svg.append("g").call(d3.axisLeft(yScale).tickFormat(d3.timeFormat("%H:%M")));
 
-    console.log("Scatter plot with tooltips added.");
+    console.log("Scatter plot with tooltips and scaled dot sizes added.");
 }
+
+
 
 function updateTooltipContent(commit, event) {
     const tooltip = document.getElementById('commit-tooltip');
     const link = document.getElementById('commit-link');
     const date = document.getElementById('commit-date');
 
-    if (!commit || Object.keys(commit).length === 0) {
-        tooltip.style.display = "none"; // Hide tooltip when leaving a dot
+    if (!commit || Object.keys(commit).length === 0 || !event) {
+        tooltip.classList.remove("show"); // Hide tooltip smoothly
         return;
     }
 
@@ -126,10 +147,26 @@ function updateTooltipContent(commit, event) {
     link.textContent = commit.id;
     date.textContent = commit.datetime.toLocaleString('en', { dateStyle: 'full' });
 
-    // Position tooltip near the mouse pointer
-    tooltip.style.left = (event.pageX + 10) + "px";
-    tooltip.style.top = (event.pageY + 10) + "px";
-    tooltip.style.display = "block";
+    // ✅ Check if event is provided before using `pageX` and `pageY`
+    if (event) {
+        tooltip.style.left = (event.pageX + 15) + "px";
+        tooltip.style.top = (event.pageY + 15) + "px";
+    }
+
+    tooltip.classList.add("show");
+}
+
+
+function updateTooltipVisibility(isVisible) {
+    const tooltip = document.getElementById('commit-tooltip');
+    tooltip.hidden = !isVisible; // Show or hide based on isVisible flag
+}
+
+function updateTooltipPosition(event) {
+    const tooltip = document.getElementById('commit-tooltip');
+
+    tooltip.style.left = `${event.clientX + 10}px`; // Offset tooltip 10px to the right
+    tooltip.style.top = `${event.clientY + 10}px`;  // Offset tooltip 10px down
 }
 
 async function loadData() {

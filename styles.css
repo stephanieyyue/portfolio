@@ -440,14 +440,26 @@ path {
   position: fixed;
   top: 1em;
   left: 1em;
-  background: rgba(0, 0, 0, 0.75);
-  color: white;
-  padding: 10px;
-  border-radius: 5px;
+  background: rgba(255, 255, 255, 0.85); /* Semi-transparent white */
+  color: #333;
+  padding: 10px 15px;
+  border-radius: 8px;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2); /* Subtle shadow */
+  backdrop-filter: blur(8px); /* Frosted glass effect */
   font-size: 14px;
-  display: none; /* Hide tooltip initially */
+  font-weight: 500;
+  white-space: nowrap;
+  display: none; /* Initially hidden */
+  transition: opacity 0.2s ease-in-out;
 }
 
+/* Tooltip visibility */
+.tooltip.show {
+  display: block;
+  opacity: 1;
+}
+
+/* Hover effects on dots */
 circle {
   transition: 200ms;
   transform-origin: center;
@@ -456,4 +468,31 @@ circle {
 
 circle:hover {
   transform: scale(1.5);
+}
+
+dl.info {
+  /* Existing styles */
+  transition-duration: 500ms;
+  transition-property: opacity, visibility;
+}
+
+/* Hide tooltip when not hovering */
+dl.info[hidden]:not(:hover, :focus-within) {
+  opacity: 0;
+  visibility: hidden;
+}
+
+.tooltip {
+  position: absolute;
+  background-color: rgba(255, 255, 255, 0.8); /* Slight transparency */
+  box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
+  border-radius: 5px;
+  padding: 8px;
+  font-size: 14px;
+  transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+.tooltip[hidden] {
+  opacity: 0;
+  visibility: hidden;
 }
