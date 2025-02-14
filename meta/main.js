@@ -204,6 +204,7 @@ function updateSelection() {
 }
 
 
+
 function updateSelectionCount() {
     const selectedCommits = brushSelection
         ? commits.filter(isCommitSelected)
@@ -273,8 +274,8 @@ function updateTooltipContent(commit, event) {
     const link = document.getElementById('commit-link');
     const date = document.getElementById('commit-date');
 
-    if (!commit || Object.keys(commit).length === 0 || !event) {
-        tooltip.classList.remove("show"); // Hide tooltip smoothly
+    if (!commit) {
+        tooltip.classList.remove("show");
         return;
     }
 
@@ -282,14 +283,14 @@ function updateTooltipContent(commit, event) {
     link.textContent = commit.id;
     date.textContent = commit.datetime.toLocaleString('en', { dateStyle: 'full' });
 
-    // ✅ Check if event is provided before using `pageX` and `pageY`
     if (event) {
-        tooltip.style.left = (event.pageX + 15) + "px";
-        tooltip.style.top = (event.pageY + 15) + "px";
+        tooltip.style.left = `${event.pageX + 15}px`;
+        tooltip.style.top = `${event.pageY + 15}px`;
     }
 
     tooltip.classList.add("show");
 }
+
 
 
 function updateTooltipVisibility(isVisible) {
