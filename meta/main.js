@@ -150,9 +150,9 @@ function brushSelector() {
 
     d3.select(svgElement)
         .call(d3.brush()
-            .extent([[0, 0], [usableWidth, usableHeight]]) // Define brush area
+            .extent([[0, 0], [usableWidth, usableHeight]]) 
             .on("start brush end", (event) => {
-                console.log("Brush event detected:", event.selection);  // ✅ Debugging log
+                console.log("Brush event detected:", event.selection);
 
                 brushSelection = event.selection;
 
@@ -162,10 +162,11 @@ function brushSelector() {
                     return;
                 }
 
-                brushed(event);  // ✅ Make sure we call brushed()!
+                brushed(event);  // ✅ Ensure this is called on brush event
             })
         );
 }
+
 
 
 
@@ -197,8 +198,11 @@ function isCommitSelected(commit) {
 
 function updateSelection() {
     d3.selectAll("circle")
-        .style("fill", d => isCommitSelected(d) ? "orange" : "steelblue");
+        .style("fill", d => isCommitSelected(d) ? "orange" : "steelblue")
+        .style("stroke", d => isCommitSelected(d) ? "white" : "none")
+        .style("stroke-width", d => isCommitSelected(d) ? 2 : 0);
 }
+
 
 function updateSelectionCount() {
     const selectedCommits = brushSelection
