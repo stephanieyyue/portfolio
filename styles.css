@@ -496,3 +496,17 @@ dl.info[hidden]:not(:hover, :focus-within) {
   opacity: 0;
   visibility: hidden;
 }
+
+@keyframes marching-ants {
+  to {
+      stroke-dashoffset: -8; /* Creates moving dashed border */
+  }
+}
+
+.selection {
+  fill-opacity: 0.1; /* Slightly transparent background */
+  stroke: black; /* Black stroke for visibility */
+  stroke-opacity: 0.7;
+  stroke-dasharray: 5 3; /* Dashed border */
+  animation: marching-ants 2s linear infinite; /* Animated stroke */
+}

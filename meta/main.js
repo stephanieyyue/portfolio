@@ -1,5 +1,6 @@
 let data = [];
 let commits = [];
+let brushSelection = null;
 const width = 1000;
 const height = 600;
 const margin = { top: 20, right: 30, bottom: 50, left: 50 };  // Adjusted for axes
@@ -77,16 +78,22 @@ function createScatterPlot() {
     }
 
     // ✅ Fix Y-axis scale as time scale
-    yScale.domain([new Date(2023, 0, 1, 0, 0), new Date(2023, 0, 1, 23, 59)]); // Full 24-hour scale
+    yScale.domain([new Date(2023, 0, 1, 0, 0), new Date(2023, 0, 1, 23, 59)]);
     xScale.domain(d3.extent(commits, d => d.datetime));
 
-    // ✅ Calculate the range of total lines edited
+    // ✅ Calculate min/max total lines edited
     const [minLines, maxLines] = d3.extent(commits, d => d.totalLines);
 
-    // ✅ Define a radius scale based on total lines edited
-    const rScale = d3.scaleLinear()
+    // ✅ Use a square root scale for radius
+    const rScale = d3.scaleSqrt()
         .domain([minLines, maxLines])
-        .range([2, 30]);  // Experiment with min/max sizes
+        .range([2, 30]); // Experiment with min/max values
+
+    // ✅ Sort commits by total lines edited in descending order
+    const sortedCommits = d3.sort(commits, (d) => -d.totalLines);
+
+    // ✅ Call brushSelector() BEFORE rendering dots
+    brushSelector();
 
     // ✅ Add grid lines BEFORE axes
     const gridlines = svg.append("g")
@@ -97,16 +104,16 @@ function createScatterPlot() {
         .tickFormat("")  // Remove text labels
         .tickSize(-usableWidth)); // Full-width grid lines
 
-    // ✅ Append circles for each commit, using rScale for radius
-    svg.selectAll("circle")
-        .data(commits)
+    // ✅ Append circles using sortedCommits
+    const dots = svg.selectAll("circle")
+        .data(sortedCommits)
         .enter()
         .append("circle")
         .attr("cx", d => xScale(d.datetime))
         .attr("cy", d => yScale(d.time))
-        .attr("r", d => rScale(d.totalLines))  // ✅ Scale dot size based on lines edited
+        .attr("r", d => rScale(d.totalLines))  // ✅ Scaled dot sizes
         .attr("fill", "steelblue")
-        .style("fill-opacity", 0.7) // Make overlapping dots visible
+        .style("fill-opacity", 0.7) // ✅ Make overlapping dots visible
         .on("mouseenter", (event, commit) => {
             updateTooltipContent(commit, event);
             updateTooltipVisibility(true);
@@ -120,6 +127,9 @@ function createScatterPlot() {
             d3.select(event.currentTarget).style("fill-opacity", 0.7); // Restore opacity
         });
 
+    // ✅ Fix tooltip disappearance by bringing dots to the top layer
+    d3.select(svg.node()).selectAll('.dots, .overlay ~ *').raise();
+
     // ✅ Add X-axis
     svg.append("g")
         .attr("transform", `translate(0, ${usableHeight})`)
@@ -128,8 +138,54 @@ function createScatterPlot() {
     // ✅ Add Y-axis with proper Time format
     svg.append("g").call(d3.axisLeft(yScale).tickFormat(d3.timeFormat("%H:%M")));
 
-    console.log("Scatter plot with tooltips and scaled dot sizes added.");
+    console.log("Scatter plot with brushing, tooltips, and improved dot scaling added.");
 }
+
+
+function brushSelector() {
+    const svgElement = document.querySelector('svg');
+
+    d3.select(svgElement)
+        .call(d3.brush()
+            .extent([[0, 0], [usableWidth, usableHeight]]) // Define brush area
+            .on("start brush end", (event) => {
+                brushSelection = event.selection;
+
+                if (!brushSelection) {
+                    // ✅ If no selection, reset colors
+                    d3.selectAll("circle").style("fill", "steelblue");
+                    return;
+                }
+
+                updateSelection(); // ✅ Call function to highlight selected dots
+            })
+        );
+}
+
+
+
+function brushed(event) {
+    brushSelection = event.selection;
+    updateSelection(); // Call function to visually update selected dots
+}
+
+function isCommitSelected(commit) {
+    if (!brushSelection) return false;
+
+    const [[x0, y0], [x1, y1]] = brushSelection;
+
+    const x = xScale(commit.datetime);
+    const y = yScale(commit.time);
+
+    return x0 <= x && x <= x1 && y0 <= y && y <= y1;
+}
+
+
+function updateSelection() {
+    d3.selectAll("circle")
+        .style("fill", d => isCommitSelected(d) ? "orange" : "steelblue");
+}
+
 
 
 
