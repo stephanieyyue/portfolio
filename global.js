@@ -1,9 +1,9 @@
 let pages = [
-  { url: '', title: 'Home' },
-  { url: 'projects/', title: 'Projects' },
-  { url: 'contact/', title: 'Contact' },
-  { url: 'resume/', title: 'Resume' },
-  { url: 'meta/', title: 'Meta' },
+  { url: 'index.html', title: 'Home' },
+  { url: 'projects.html', title: 'Projects' },
+  { url: 'contact.html', title: 'Contact' },
+  { url: 'resume.html', title: 'Resume' },
+  { url: 'meta.html', title: 'Meta' },
   { url: 'https://github.com/stephanieyyue', title: 'GitHub' }
 ];
 
@@ -13,29 +13,30 @@ document.body.prepend(nav);
 
 for (let p of pages) {
   let url = p.url;
+
+  // ✅ Fix relative paths for subdirectories
   if (!ARE_WE_HOME && !url.startsWith('http')) {
-    url = '../' + url;
+    url = './' + url;
   }
-  
+
   let a = document.createElement('a');
   a.href = url;
   a.textContent = p.title;
-  
-  // Add current class if it's the active page
-  a.classList.toggle(
-    'current',
-    a.host === location.host && a.pathname === location.pathname
-  );
-  
-  // Add target="_blank" for external links
+
+  // ✅ Ensure "current" class highlights the active page
+  a.classList.toggle('current', location.pathname.endsWith(p.url));
+
+  // ✅ Open external links in a new tab
   if (a.host !== location.host) {
     a.target = "_blank";
   }
-  
+
   nav.append(a);
 }
 
-// Add theme switcher
+console.log("✅ Navigation loaded:", nav.innerHTML); // ✅ Debugging Log
+
+// ✅ Add Theme Switcher
 document.body.insertAdjacentHTML(
   'afterbegin',
   `<label class="color-scheme">
@@ -48,7 +49,7 @@ document.body.insertAdjacentHTML(
   </label>`
 );
 
-// Get reference to select element
+// ✅ Handle Theme Switching
 const select = document.querySelector('.color-scheme select');
 
 function setColorScheme(colorScheme) {
@@ -61,74 +62,72 @@ if ("colorScheme" in localStorage) {
   setColorScheme(localStorage.colorScheme);
 }
 
-// Handle changes
+// Save new preference when changed
 select.addEventListener('input', (event) => {
   localStorage.colorScheme = event.target.value;
   setColorScheme(event.target.value);
 });
 
+// ✅ Handle Form Submissions
 const form = document.querySelector('form');
 
 form?.addEventListener('submit', (event) => {
   event.preventDefault();
-  
+
   const data = new FormData(form);
   let url = form.action + '?';
-  
+
   for (let [name, value] of data) {
     url += `${name}=${encodeURIComponent(value)}&`;
   }
-  
-  location.href = url.slice(0, -1); // Remove trailing &
+
+  location.href = url.slice(0, -1); // Remove trailing "&"
 });
 
+// ✅ Fetch JSON Data
 export async function fetchJSON(url) {
   try {
-      const response = await fetch(url);
-      if (!response.ok) {
-          throw new Error(`Failed to fetch projects: ${response.statusText}`);
-      }
-      const data = await response.json();
-      return data;
+    const response = await fetch(url);
+    if (!response.ok) {
+      throw new Error(`Failed to fetch data: ${response.statusText}`);
+    }
+    return await response.json();
   } catch (error) {
-      console.error('Error fetching or parsing JSON data:', error);
+    console.error('Error fetching or parsing JSON:', error);
   }
 }
 
-export async function fetchGitHubData(stephanieyyue) {
-  return fetchJSON(`https://api.github.com/users/${stephanieyyue}`);
+// ✅ Fetch GitHub Data for User
+export async function fetchGitHubData(username) {
+  return fetchJSON(`https://api.github.com/users/${username}`);
 }
 
+// ✅ Render Projects Function
 export function renderProjects(projects, containerElement, headingLevel = 'h2') {
   if (!Array.isArray(projects)) {
-      console.error('Projects must be an array');
-      return;
+    console.error('Projects must be an array');
+    return;
   }
-  
-  // Clear the container before rendering the projects.
-  // containerElement.innerHTML = '';
-  
+
+  // ✅ Clear the container before rendering the projects
+  containerElement.innerHTML = '';
+
   projects.forEach(project => {
-      // Create an article element for each project.
-      const article = document.createElement('article');
-      
-      // Set the inner HTML of the article.
-      // Notice that the description and year are wrapped in a <div class="project-text">
-      // and the year is given a class "project-year" for styling.
-      article.innerHTML = `
-          <${headingLevel}>${project.title}</${headingLevel}>
-          <img src="${project.image}" alt="${project.title}">
-          <div class="project-text">
-              <p>${project.description}</p>
-              <p class="project-year">
-                  c. ${project.year}
-              </p>
-          </div>
-      `;
-      
-      containerElement.appendChild(article);
+    // ✅ Create an article element for each project
+    const article = document.createElement('article');
+
+    // ✅ Set the inner HTML of the article
+    article.innerHTML = `
+      <${headingLevel}>${project.title}</${headingLevel}>
+      <img src="${project.image}" alt="${project.title}">
+      <div class="project-text">
+        <p>${project.description}</p>
+        <p class="project-year">c. ${project.year}</p>
+      </div>
+    `;
+
+    containerElement.appendChild(article);
   });
 }
 
-
-
+console.log("✅ global.js finished loading");
