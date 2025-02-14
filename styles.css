@@ -497,16 +497,131 @@ dl.info[hidden]:not(:hover, :focus-within) {
   visibility: hidden;
 }
 
-@keyframes marching-ants {
-  to {
-      stroke-dashoffset: -8; /* Creates moving dashed border */
-  }
+body {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background-color: #f8f9fa;
+  font-family: Arial, sans-serif;
+  min-height: 100vh;
+}
+
+.container {
+  min-height: 100vh; /* Ensures full viewport height */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+}
+
+
+
+#stats {
+  display: flex;
+  justify-content: space-around;
+  background: white;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+  margin-bottom: 20px;
+}
+
+.stat-box dt {
+  font-size: 14px;
+  font-weight: bold;
+  text-transform: uppercase;
+}
+
+.stat-box dd {
+  font-size: 28px;
+  font-weight: bold;
+}
+
+#chart svg {
+  display: block;
+  margin: auto;
+  width: 900px;
+  height: 500px;
+}
+
+.tooltip {
+  position: absolute;
+  background: white;
+  padding: 10px;
+  border-radius: 8px;
+  box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.2);
+  font-size: 14px;
+  opacity: 0;
+  transition: opacity 0.2s ease-in-out;
+}
+
+.tooltip.show {
+  opacity: 1;
 }
 
 .selection {
-  fill-opacity: 0.1; /* Slightly transparent background */
-  stroke: black; /* Black stroke for visibility */
-  stroke-opacity: 0.7;
-  stroke-dasharray: 5 3; /* Dashed border */
-  animation: marching-ants 2s linear infinite; /* Animated stroke */
+  fill-opacity: 0.1;
+  stroke: black;
+  stroke-dasharray: 5 3;
+  animation: marching-ants 2s linear infinite;
 }
+
+@keyframes marching-ants {
+  to {
+    stroke-dashoffset: -8;
+  }
+}
+
+.stats-chart-container {
+  width: 100%;
+  max-width: 1200px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+#stats {
+  flex: 1;
+  text-align: left;
+}
+
+#chart {
+  width: 100%;
+  max-width: 1000px; /* Adjust as needed */
+  height: auto;
+}
+
+#chart svg {
+  width: 100%;
+  height: auto;
+}
+
+.stats-container {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  background: #f8f9fa;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+  width: 80%;
+  text-align: center;
+}
+
+.stat-box dt {
+  font-size: 16px;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.stat-box dd {
+  font-size: 24px;
+  font-weight: bold;
+}
+html, body {
+  overflow-x: hidden;
+}
+
+

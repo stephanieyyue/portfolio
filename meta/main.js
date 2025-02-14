@@ -9,10 +9,11 @@ const usableHeight = height - margin.top - margin.bottom;
 
 const svg = d3.select("#chart")
     .append("svg")
-    .attr("width", width)
-    .attr("height", height)
-    .append("g")
-    .attr("transform", `translate(${margin.left}, ${margin.top})`);
+    .attr("width", "100%")
+    .attr("height", 600)  // Adjust as needed
+    .attr("viewBox", `0 0 ${width} ${height}`)
+    .attr("preserveAspectRatio", "xMidYMid meet");  // Keeps aspect ratio
+
 
 const xScale = d3.scaleTime().range([0, usableWidth]);
 const yScale = d3.scaleTime().range([usableHeight, 0]);
@@ -34,11 +35,13 @@ function processCommits() {
                 datetime: new Date(first.datetime), // Keep full datetime for X-axis
                 time: new Date(2023, 0, 1, hours, minutes), // Convert hour+minute to Date object for Y-axis
                 totalLines: lines.length,
+                lines: lines.map(d => ({ type: d.type || "unknown", length: d.length || 0 })) // ✅ Ensure lines exist
             };
         });
 
-    console.log("Grouped Commits:", commits);
+    console.log("Processed Commits:", commits);
 }
+
 
 
 function displayStats() {
@@ -149,25 +152,36 @@ function brushSelector() {
         .call(d3.brush()
             .extent([[0, 0], [usableWidth, usableHeight]]) // Define brush area
             .on("start brush end", (event) => {
+                console.log("Brush event detected:", event.selection);  // ✅ Debugging log
+
                 brushSelection = event.selection;
 
                 if (!brushSelection) {
-                    // ✅ If no selection, reset colors
                     d3.selectAll("circle").style("fill", "steelblue");
+                    updateSelectionCount();
                     return;
                 }
 
-                updateSelection(); // ✅ Call function to highlight selected dots
+                brushed(event);  // ✅ Make sure we call brushed()!
             })
         );
 }
 
 
 
+
+
 function brushed(event) {
     brushSelection = event.selection;
-    updateSelection(); // Call function to visually update selected dots
+    
+    updateSelection();        // ✅ Update dot colors
+    updateSelectionCount();   // ✅ Update commit count
+    updateLanguageBreakdown();  // ✅ Should now run every time a brush event happens
+
+    console.log("Brushed event triggered!");  // ✅ Debugging log
 }
+
+
 
 function isCommitSelected(commit) {
     if (!brushSelection) return false;
@@ -185,6 +199,67 @@ function updateSelection() {
     d3.selectAll("circle")
         .style("fill", d => isCommitSelected(d) ? "orange" : "steelblue");
 }
+
+function updateSelectionCount() {
+    const selectedCommits = brushSelection
+        ? commits.filter(isCommitSelected)
+        : [];
+
+    const countElement = document.getElementById('selection-count');
+    countElement.textContent = `${selectedCommits.length || 'No'} commits selected`;
+
+    return selectedCommits; // Optional: Can be used for additional processing
+}
+
+function updateLanguageBreakdown() {
+    const selectedCommits = brushSelection
+        ? commits.filter(isCommitSelected)
+        : [];
+
+    console.log("🟢 Selected Commits:", selectedCommits);
+
+    const container = document.getElementById("language-breakdown");
+
+    if (selectedCommits.length === 0) {
+        container.innerHTML = "No commits selected";
+        return;
+    }
+
+    // ✅ Extract lines safely inside the function
+    const lines = selectedCommits.flatMap(d => d.lines || []);
+
+    console.log("🟡 Extracted Lines Data:", lines); // 🔴 If this is empty, problem is here!
+
+    if (lines.length === 0) {
+        container.innerHTML = "No language data available";
+        return;
+    }
+
+    // ✅ Ensure only valid `type` properties
+    const breakdown = d3.rollup(
+        lines.filter(d => d.type),  // 🔴 Fix: Ensure `type` is not undefined
+        (v) => v.length,
+        (d) => d.type
+    );
+
+    console.log("🔵 Language Breakdown Data:", breakdown);
+
+    container.innerHTML = "";
+    for (const [language, count] of breakdown) {
+        const proportion = count / lines.length;
+        const formatted = d3.format(".1%")(proportion);
+
+        container.innerHTML += `
+            <dt>${language}</dt>
+            <dd>${count} lines (${formatted})</dd>
+        `;
+    }
+
+    return breakdown;
+}
+
+
+
 
 
 
@@ -244,4 +319,5 @@ async function loadData() {
 
 document.addEventListener('DOMContentLoaded', async () => {
     await loadData();
+    updateLanguageBreakdown();
 });
