@@ -2,10 +2,15 @@ body {
   max-width: 1200px;
   margin-inline: max(1em, (100% - 100ch) / 2);
   padding: 0 20px;
+  
 }
 :root {
-  --color-accent: oklch(65% 50% 0);
+  --text-color-light: black;
+  --text-color-dark: white;
+  --background-light: white;
+  --background-dark: black;
 }
+
 
 nav ul, nav li {
   display: contents;
@@ -622,6 +627,31 @@ body {
 }
 html, body {
   overflow-x: hidden;
+}
+
+nav ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  gap: 1em;
+}
+
+nav li {
+  display: inline;
+}
+
+nav a {
+  text-decoration: none;
+  color: var(--text-color-light);
+  padding: 10px;
+  font-weight: bold;
+}
+
+nav a:hover {
+  color: var(--text-color-dark);
+  background-color: var(--background-dark);
+  padding: 10px;
 }
 
 
