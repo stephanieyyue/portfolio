@@ -16,7 +16,18 @@ const svg = d3.select("#chart")
 
 
 const xScale = d3.scaleTime().range([0, usableWidth]);
-const yScale = d3.scaleTime().range([usableHeight, 0]);
+const yScale = d3.scaleTime()
+    .domain([new Date(2023, 0, 1, 0, 0), new Date(2023, 0, 1, 23, 59)])
+    .range([usableHeight, 0]);
+
+// ✅ Ensure Y-axis displays time with proper format
+svg.append("g")
+    .attr("transform", `translate(${margin.left}, 0)`)  // ✅ Moves axis to the left margin
+    .call(d3.axisLeft(yScale)
+        .ticks(d3.timeHour.every(2))  // ✅ Show every 2-hour interval
+        .tickFormat(d3.timeFormat("%H:%M")));  // ✅ Proper hour-minute format
+
+
 
 function processCommits() {
     commits = d3.groups(data, d => d.commit)
@@ -98,23 +109,35 @@ function createScatterPlot() {
     // ✅ Call brushSelector() BEFORE rendering dots
     brushSelector();
 
-    // ✅ Add grid lines BEFORE axes
-    const gridlines = svg.append("g")
+    // ✅ Add Grid Lines BEFORE Axes
+    svg.append("g")
         .attr("class", "gridlines")
-        .attr("transform", `translate(0, 0)`);
+        .attr("transform", `translate(${margin.left}, 0)`)
+        .call(d3.axisLeft(yScale)
+            .tickFormat("")
+            .tickSize(-usableWidth));
 
-    gridlines.call(d3.axisLeft(yScale)
-        .tickFormat("")  // Remove text labels
-        .tickSize(-usableWidth)); // Full-width grid lines
+    // ✅ Add X-Axis (Date) AFTER Gridlines
+    svg.append("g")
+        .attr("transform", `translate(${margin.left}, ${usableHeight})`)
+        .call(d3.axisBottom(xScale)
+            .tickFormat(d3.timeFormat("%b %d")));
 
-    // ✅ Append circles using sortedCommits
+    // ✅ Add Y-Axis (Time) AFTER Gridlines
+    svg.append("g")
+        .attr("transform", `translate(${margin.left}, 0)`)
+        .call(d3.axisLeft(yScale)
+            .ticks(d3.timeHour.every(2)) // Show every 2 hours
+            .tickFormat(d3.timeFormat("%H:%M"))); // Format: HH:MM
+
+    // ✅ Append Circles using sortedCommits
     const dots = svg.selectAll("circle")
         .data(sortedCommits)
         .enter()
         .append("circle")
-        .attr("cx", d => xScale(d.datetime))
-        .attr("cy", d => yScale(d.time))
-        .attr("r", d => rScale(d.totalLines))  // ✅ Scaled dot sizes
+        .attr("cx", d => xScale(d.datetime) + margin.left) // ✅ Offset for margin
+        .attr("cy", d => yScale(d.time)) // ✅ Y-axis properly scaled
+        .attr("r", d => rScale(d.totalLines)) // ✅ Scaled dot sizes
         .attr("fill", "steelblue")
         .style("fill-opacity", 0.7) // ✅ Make overlapping dots visible
         .on("mouseenter", (event, commit) => {
@@ -133,40 +156,32 @@ function createScatterPlot() {
     // ✅ Fix tooltip disappearance by bringing dots to the top layer
     d3.select(svg.node()).selectAll('.dots, .overlay ~ *').raise();
 
-    // ✅ Add X-axis
-    svg.append("g")
-        .attr("transform", `translate(0, ${usableHeight})`)
-        .call(d3.axisBottom(xScale).tickFormat(d3.timeFormat("%b %d")));
-
-    // ✅ Add Y-axis with proper Time format
-    svg.append("g").call(d3.axisLeft(yScale).tickFormat(d3.timeFormat("%H:%M")));
-
     console.log("Scatter plot with brushing, tooltips, and improved dot scaling added.");
 }
 
 
+
 function brushSelector() {
-    const svgElement = document.querySelector('svg');
+    const brush = d3.brush()
+        .extent([[0, 0], [usableWidth, usableHeight]]) // Define brush area
+        .on("brush end", (event) => {
+            brushSelection = event.selection;
+            console.log("🟢 Brush Selection:", brushSelection); // Debugging log
 
-    d3.select(svgElement)
-        .call(d3.brush()
-            .extent([[0, 0], [usableWidth, usableHeight]]) 
-            .on("start brush end", (event) => {
-                console.log("Brush event detected:", event.selection);
+            if (!brushSelection) {
+                d3.selectAll("circle").style("fill", "steelblue");
+                updateSelectionCount();
+                return;
+            }
 
-                brushSelection = event.selection;
+            brushed(event);  // ✅ Ensure this is called on brush event
+        });
 
-                if (!brushSelection) {
-                    d3.selectAll("circle").style("fill", "steelblue");
-                    updateSelectionCount();
-                    return;
-                }
-
-                brushed(event);  // ✅ Ensure this is called on brush event
-            })
-        );
+    // ✅ Apply brush to the correct SVG group
+    svg.append("g")
+        .attr("class", "brush")
+        .call(brush);
 }
-
 
 
 
@@ -214,6 +229,7 @@ function updateSelection() {
         .style("stroke", d => isCommitSelected(d) ? "white" : "none")
         .style("stroke-width", d => isCommitSelected(d) ? 2 : 0);
 }
+
 
 
 
