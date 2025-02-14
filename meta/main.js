@@ -177,7 +177,19 @@ function brushed(event) {
     
     updateSelection();        // ✅ Update dot colors
     updateSelectionCount();   // ✅ Update commit count
-    updateLanguageBreakdown();  // ✅ Should now run every time a brush event happens
+    updateLanguageBreakdown();  // ✅ Run every time a brush event happens
+
+    const selectedCommits = brushSelection
+        ? commits.filter(isCommitSelected)
+        : [];
+
+    if (selectedCommits.length > 0) {
+        updateTooltipContent(selectedCommits[0], event);
+        updateTooltipVisibility(true);
+    } else {
+        updateTooltipContent(null, null);
+        updateTooltipVisibility(false);
+    }
 
     console.log("Brushed event triggered!");  // ✅ Debugging log
 }
@@ -274,7 +286,8 @@ function updateTooltipContent(commit, event) {
     const link = document.getElementById('commit-link');
     const date = document.getElementById('commit-date');
 
-    if (!commit) {
+    // ✅ Prevent errors by checking if commit is valid
+    if (!commit || !commit.id || !commit.datetime) {
         tooltip.classList.remove("show");
         return;
     }
@@ -283,6 +296,7 @@ function updateTooltipContent(commit, event) {
     link.textContent = commit.id;
     date.textContent = commit.datetime.toLocaleString('en', { dateStyle: 'full' });
 
+    // ✅ Ensure event exists before setting tooltip position
     if (event) {
         tooltip.style.left = `${event.pageX + 15}px`;
         tooltip.style.top = `${event.pageY + 15}px`;
@@ -290,6 +304,7 @@ function updateTooltipContent(commit, event) {
 
     tooltip.classList.add("show");
 }
+
 
 
 
