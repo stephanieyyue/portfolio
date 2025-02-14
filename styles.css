@@ -175,3 +175,32 @@ nav a:hover, nav a.current {
   color: #007bff;
   border-bottom: 3px solid #007bff;
 }
+
+html {
+  color-scheme: light dark;
+}
+
+/* Light mode */
+:root {
+  --text-color-light: black;
+  --background-light: white;
+}
+
+/* Dark mode */
+@media (prefers-color-scheme: dark) {
+  :root {
+      --text-color-dark: white;
+      --background-dark: black;
+  }
+}
+
+/* Apply theme */
+body {
+  background-color: var(--background-light);
+  color: var(--text-color-light);
+}
+
+[data-theme="dark"] body {
+  background-color: var(--background-dark);
+  color: var(--text-color-dark);
+}

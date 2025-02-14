@@ -1,17 +1,17 @@
 let pages = [
-  { url: 'index.html', title: 'Home' },
-  { url: 'projects.html', title: 'Projects' },
-  { url: 'contact.html', title: 'Contact' },
-  { url: 'resume.html', title: 'Resume' },
-  { url: 'meta.html', title: 'Meta' },
+  { url: '/', title: 'Home' },
+  { url: '/projects/', title: 'Projects' },
+  { url: '/contact/', title: 'Contact' },
+  { url: '/resume/', title: 'Resume' },
+  { url: '/meta/', title: 'Meta' },
   { url: 'https://github.com/stephanieyyue', title: 'GitHub' }
 ];
 
-// ✅ Detect if we are inside a subdirectory
+// ✅ Detect if we are inside a subdirectory (for local development)
 const isInSubdirectory = location.pathname.split('/').length > 2;
 
-// ✅ Get the base path dynamically
-const basePath = isInSubdirectory ? '../' : './';
+// ✅ Set correct base path for GitHub Pages
+const basePath = isInSubdirectory ? '../' : '/';
 
 let nav = document.createElement('nav');
 document.body.prepend(nav);
@@ -19,9 +19,9 @@ document.body.prepend(nav);
 for (let p of pages) {
   let url = p.url;
 
-  // ✅ Correct relative paths for subdirectories
+  // ✅ Ensure correct relative paths for local and GitHub Pages
   if (!url.startsWith('http')) {
-    url = basePath + url;
+    url = basePath + p.url;
   }
 
   let a = document.createElement('a');
@@ -29,9 +29,9 @@ for (let p of pages) {
   a.textContent = p.title;
 
   // ✅ Fix "current" class to properly highlight active page
-  a.classList.toggle('current', location.pathname.includes(p.url));
+  a.classList.toggle('current', location.pathname.startsWith(p.url));
 
-  // ✅ Open external links in a new tab
+  // ✅ Open external links (GitHub) in a new tab
   if (a.host !== location.host) {
     a.target = "_blank";
   }
@@ -39,7 +39,8 @@ for (let p of pages) {
   nav.append(a);
 }
 
-console.log("✅ Navigation loaded:", nav.innerHTML); // ✅ Debugging Log
+console.log("✅ Navigation loaded:", nav.innerHTML);
+
 
 // ✅ Add Theme Switcher
 document.body.insertAdjacentHTML(

@@ -4,19 +4,22 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Stephanie Yue: Personal Website and Portfolio</title>
-    <link rel="stylesheet" href="../portfolio/styles.css">
+    <link rel="stylesheet" href="styles.css">  <!-- ✅ Correct path -->
+    <script type="module" src="../portfolio/global.js" defer></script>  <!-- ✅ Correct path -->
 </head>
 <body>
-    <h1>Stephanie Yue</h1>
-    <img src="images/stephanie.png" alt="This is a picture of me">
-    <p>I am a 2nd year transfer student studying data science</p>
-    <script type="module" src="../portfolio/global.js"></script>
+    <div class="container">  <!-- ✅ Added container -->
+        <h1>Stephanie Yue</h1>
+        <img src="images/stephanie.png" alt="This is a picture of me">
+        <p>I am a 2nd year transfer student studying data science</p>
+    </div>
+
     <h2>Latest Projects</h2>
     <div class="projects"></div>
-    <script src="index.js" type="module" defer></script>
-    <h3>GitHub Stats</h2>
-    <div id="profile-stats"></div>
-    <script src="index.js" type = "module" defer></script>
 
+    <h3>GitHub Stats</h3>
+    <div id="profile-stats"></div>
+
+    <script src="index.js" type="module" defer></script>
 </body>
 </html>
