@@ -7,24 +7,29 @@ let pages = [
   { url: 'https://github.com/stephanieyyue', title: 'GitHub' }
 ];
 
-const ARE_WE_HOME = document.documentElement.classList.contains('home');
+// ✅ Detect if we are inside a subdirectory
+const isInSubdirectory = location.pathname.split('/').length > 2;
+
+// ✅ Get the base path dynamically
+const basePath = isInSubdirectory ? '../' : './';
+
 let nav = document.createElement('nav');
 document.body.prepend(nav);
 
 for (let p of pages) {
   let url = p.url;
 
-  // ✅ Fix relative paths for subdirectories
-  if (!ARE_WE_HOME && !url.startsWith('http')) {
-    url = './' + url;
+  // ✅ Correct relative paths for subdirectories
+  if (!url.startsWith('http')) {
+    url = basePath + url;
   }
 
   let a = document.createElement('a');
   a.href = url;
   a.textContent = p.title;
 
-  // ✅ Ensure "current" class highlights the active page
-  a.classList.toggle('current', location.pathname.endsWith(p.url));
+  // ✅ Fix "current" class to properly highlight active page
+  a.classList.toggle('current', location.pathname.includes(p.url));
 
   // ✅ Open external links in a new tab
   if (a.host !== location.host) {
